@@ -1,4 +1,3 @@
-extern crate rand;
 
 mod Color;
 mod camera;
