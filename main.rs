@@ -31,6 +31,7 @@ use sphere::Sphere;
 use std::collections::hash_map::Entry::Vacant;
 use std::rc::Rc;
 pub use vec3::Vec3;
+use crate::rtweekend::clamp;
 
 fn ray_color(r: Ray, world: &Hittable_list, depth: i32) -> color {
     let mut rec = hit_record::new();
@@ -72,13 +73,11 @@ fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
 }
 
 fn main() {
-    let mut img: RgbImage = ImageBuffer::new(1024, 512);
-    let bar = ProgressBar::new(1024);
     //image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width: f64 = 400.0;
+    let aspect_ratio = 3.0 / 2.0;
+    let image_width: f64 = 1200.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 100.0;
+    let samples_per_pixel = 500.0;
     let max_depth = 50;
 
     /*
@@ -147,14 +146,13 @@ fn main() {
 
     //render
     println!("P3\n{} {} \n255\n", image_width, image_height);
+    let mut img: RgbImage = ImageBuffer::new(image_width as u32, image_height as u32);
+    let bar = ProgressBar::new(image_width as u64);
     let mut j = image_height - 1.0;
-    let mut j1 = (image_height - 1.0) as u32;
-    let mut i1 = 0;
+
     while j >= 0.0 {
-        j1 = j as u32;
         let mut i = 0.0;
         while i < image_width {
-            i1 = i as u32;
             let mut s = 0.0;
             let mut pixel_color = color::new(0.0, 0.0, 0.0);
             while s < samples_per_pixel {
@@ -165,12 +163,25 @@ fn main() {
                 s = s + 1.0;
             }
 
-            let pixel = img.get_pixel_mut(j1,i1);
-            let colorx = pixel_color.x as u8;
-            let colory = pixel_color.y as u8;
-            let colorz = pixel_color.z as u8;
+            let pixel = img.get_pixel_mut(i as u32,j as u32);
+            let mut r = pixel_color.x;
+            let mut g = pixel_color.y;
+            let mut b = pixel_color.z;
+            let scale = 1.0 / samples_per_pixel;
+            r = (scale * r).sqrt();
+            g = (scale * g).sqrt();
+            b = (scale * b).sqrt();
+            clamp(r, 0.0, 0.999);
+            clamp(g, 0.0, 0.999);
+            clamp(b, 0.0, 0.999);
+            let r = r * 255.999;
+            let g = g * 255.999;
+            let b = b * 255.999;
+            let r = r as i64;
+            let g = g as i64;
+            let b = b as i64;
             color::wrt_color(&pixel_color, samples_per_pixel);
-            *pixel = image::Rgb([colorx,colory,colorz]);
+            *pixel = image::Rgb([r as u8,g as u8,b as u8]);
             i = i + 1.0;
         }
         bar.inc(1);
