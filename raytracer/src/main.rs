@@ -173,7 +173,7 @@ fn main() {
             let r = r as i64;
             let g = g as i64;
             let b = b as i64;
-            color::wrt_color(&pixel_color, samples_per_pixel);
+            //color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r as u8,g as u8,b as u8]);
             i = i + 1.0;
         }
