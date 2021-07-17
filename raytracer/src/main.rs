@@ -74,11 +74,11 @@ fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
 
 fn main() {
     //image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width: f64 = 400.0;
+    let aspect_ratio = 3.0 / 2.0;
+    let image_width: f64 = 1200.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 50.0;
-    let max_depth = 10;
+    let samples_per_pixel = 500.0;
+    let max_depth = 50;
 
     /*
     let mut world = Hittable_list::new_default();
@@ -116,11 +116,8 @@ fn main() {
     */
     let world = random_scene();
     //camera
-    let aspect_ratio = 16.0 / 9.0;
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-    let lookfrom = Point3::new(13.0,2.0,3.0);
+
+    let lookfrom = Point3::new(12.0,2.0,3.0);
     let lookat = Point3::new(0.0,0.0,0.0);
     let vup = Vec3::new(0.0,1.0,0.0);
     let dist_to_focus = 10.0;
@@ -135,11 +132,7 @@ fn main() {
         dist_to_focus
     );
 
-    let origin = Point3::zero();
-    let horizon = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizon / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
+
 
     //rand
     let mut rng = rand::thread_rng();
