@@ -9,6 +9,7 @@ mod ray;
 mod rtweekend;
 mod sphere;
 mod vec3;
+mod moving_sphere;
 
 #[allow(clippy::float_cmp)]
 use image::{ImageBuffer, RgbImage};
@@ -18,7 +19,7 @@ use crate::camera::Camera;
 use crate::hittable::hit_record;
 use crate::material::{Metal, Material};
 use crate::material::{Dielectric, Lambertian};
-use crate::rtweekend::infinity;
+use crate::rtweekend::{infinity, random_double};
 pub use crate::vec3::color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
@@ -32,6 +33,7 @@ use std::collections::hash_map::Entry::Vacant;
 use std::rc::Rc;
 pub use vec3::Vec3;
 use crate::rtweekend::clamp;
+use crate::moving_sphere::Moving_sphere;
 
 fn ray_color(r: Ray, world: &Hittable_list, depth: i32) -> color {
     let mut rec = hit_record::new();
@@ -74,46 +76,13 @@ fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
 
 fn main() {
     //image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width: f64 = 1200.0;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 500.0;
+    let samples_per_pixel = 100.0;
     let max_depth = 50;
 
-    /*
-    let mut world = Hittable_list::new_default();
-
-    let material_ground: Rc<Lambertian> = Rc::new(Lambertian::new(color::new(0.8, 0.8, 0.0)));
-    let material_center: Rc<Lambertian> = Rc::new(Lambertian::new(color::new(0.1, 0.2, 0.5)));
-    let material_left: Rc<Dielectric> = Rc::new(Dielectric::new(1.5));
-    let material_right: Rc<Metal> = Rc::new(Metal::new(color::new(0.8, 0.6, 0.2), 0.0));
-
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, -100.5, -1.0),
-        100.0,
-        material_ground.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        material_center.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        0.5,
-        material_left.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        -0.45,
-        material_left.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(1.0, 0.0, -1.0),
-        0.5,
-        material_right.clone(),
-    )));
-    */
+    //world
     let world = random_scene();
     //camera
 
@@ -129,7 +98,9 @@ fn main() {
         20.0,
         aspect_ratio,
         aperture,
-        dist_to_focus
+        dist_to_focus,
+        0.0,
+        1.0
     );
 
 
@@ -155,7 +126,7 @@ fn main() {
                 pixel_color += ray_color(r, &world, max_depth);
                 s = s + 1.0;
             }
-
+            //color write
             let pixel = img.get_pixel_mut(i as u32,j as u32);
             let mut r = pixel_color.x;
             let mut g = pixel_color.y;
@@ -173,7 +144,7 @@ fn main() {
             let r = r as i64;
             let g = g as i64;
             let b = b as i64;
-            //color::wrt_color(&pixel_color, samples_per_pixel);
+            color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r as u8,g as u8,b as u8]);
             i = i + 1.0;
         }
@@ -207,8 +178,12 @@ pub fn random_scene() -> Hittable_list{
                 if choose_mat < 0.8{
                     let albedo = color::random() * color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
-                    world.add(Rc::new(Sphere::new(
+                    let center2 = center + Vec3::new(0.0,random_double(0.0,0.5),0.0);
+                    world.add(Rc::new(Moving_sphere::new(
                         center,
+                        center2,
+                        0.0,
+                        1.0,
                         0.2,
                         sphere_material.clone(),
                     )));
