@@ -17,7 +17,7 @@ impl Sphere {
         Sphere {
             center: cen,
             radius: r,
-            mat_ptr: m.clone(),
+            mat_ptr: m,
         }
     }
 }

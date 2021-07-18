@@ -1,4 +1,4 @@
-use crate::rtweekend::{degrees_to_radians, random_double};
+use crate::rtweekend::degrees_to_radians;
 use crate::vec3::color;
 use crate::vec3::Point3;
 use crate::Ray;
@@ -13,8 +13,6 @@ pub struct Camera {
     v: Vec3,
     w: Vec3,
     lens_radius: f64,
-    time0 : f64,
-    time1 : f64
 }
 
 impl Camera {
@@ -26,8 +24,6 @@ impl Camera {
         aspect_ratio: f64,
         aperture: f64,
         focus_dist: f64,
-        _time0 : f64,
-        _time1 : f64
     ) -> Camera {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();
@@ -46,12 +42,10 @@ impl Camera {
             horizontal: hor,
             vertical: ver,
             lower_left_corner: llc,
-            u : u1,
-            v : v1,
-            w : w1,
-            lens_radius : aperture / 2.0,
-            time0 : _time0,
-            time1 : _time1
+            u: u1,
+            v: v1,
+            w: w1,
+            lens_radius: aperture / 2.0,
         }
     }
 
@@ -61,7 +55,6 @@ impl Camera {
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + self.horizontal * s + self.vertical * t - self.origin - offset,
-            random_double(self.time0,self.time1)
         )
     }
 }
