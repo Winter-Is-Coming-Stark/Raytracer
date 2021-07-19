@@ -5,6 +5,7 @@ use crate::HitRecord;
 use crate::Vec3;
 use crate::{Hittable, Ray};
 use std::rc::Rc;
+use crate::aabb::AABB;
 
 pub struct MovingSphere {
     center0: Point3,
@@ -76,6 +77,21 @@ impl Hittable for MovingSphere {
         let mut outward_normal = (rec.p - self.center(r.time())) / self.radius;
         rec.set_face_normal(&r, &mut outward_normal);
         rec.mat_ptr = self.mat_ptr.clone();
+        true
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut AABB) -> bool {
+        let box0 = AABB::new(
+            self.center(_time0) - Vec3::new(self.radius,self.radius,self.radius),
+            self.center(_time0) + Vec3::new(self.radius,self.radius,self.radius)
+        );
+
+        let box1 = AABB::new(
+            self.center(_time1) - Vec3::new(self.radius,self.radius,self.radius),
+            self.center(_time1) + Vec3::new(self.radius,self.radius,self.radius)
+        );
+
+        *output_box = AABB::surrounding_box(box0,box1);
         true
     }
 }

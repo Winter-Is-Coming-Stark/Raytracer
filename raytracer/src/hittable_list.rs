@@ -2,6 +2,7 @@ use crate::hittable::HitRecord;
 use crate::hittable::Hittable;
 use crate::Ray;
 use std::rc::Rc;
+use crate::aabb::AABB;
 
 #[derive(Clone)]
 pub struct HittableList {
@@ -47,5 +48,23 @@ impl crate::hittable::Hittable for HittableList {
             }
         }
         hit_anything
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut AABB) -> bool {
+        if self.objects.is_empty(){
+            return false;
+        }
+
+        let mut temp_box:AABB = AABB::default_new();
+        let mut first_box = true;
+
+        for object in &self.objects{
+            if !object.bounding_box(time0,time1,&mut temp_box){
+                return false;
+            }
+            *output_box = if first_box {temp_box} else {AABB::surrounding_box(*output_box,temp_box)};
+            first_box = true;
+        }
+        true
     }
 }

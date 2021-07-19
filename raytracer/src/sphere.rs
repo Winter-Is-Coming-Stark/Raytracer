@@ -3,6 +3,8 @@ use crate::Point3;
 use crate::Ray;
 use crate::Vec3;
 use std::rc::Rc;
+use crate::aabb;
+use crate::aabb::AABB;
 
 pub struct Sphere {
     center: Point3,
@@ -49,5 +51,13 @@ impl crate::hittable::Hittable for Sphere {
             }
         }
         false
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut AABB) -> bool {
+        *output_box = AABB::new(
+            self.center - Vec3::new(self.radius,self.radius,self.radius),
+            self.center + Vec3::new(self.radius,self.radius,self.radius),
+        );
+        true
     }
 }

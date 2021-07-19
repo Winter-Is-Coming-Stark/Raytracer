@@ -20,3 +20,22 @@ pub fn random_double(low: f64, high: f64) -> f64 {
     let mut rng = rand::thread_rng();
     rng.gen_range(low..high)
 }
+
+pub fn random_int(low: i32,high:i32) -> i32{
+    let mut rng = rand::thread_rng();
+    rng.gen_range(low..high)
+}
+
+pub fn fmin(a: f64,b: f64) -> f64{
+    if a <= b{
+        return a;
+    }
+    b
+}
+
+pub fn fmax(a: f64,b: f64) -> f64{
+    if a >= b{
+        return a;
+    }
+    b
+}
