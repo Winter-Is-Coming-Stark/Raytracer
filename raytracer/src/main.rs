@@ -61,11 +61,11 @@ fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
 
 fn main() {
     //image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width: f64 = 400.0;
+    let aspect_ratio = 3.0 / 2.0;
+    let image_width: f64 = 1200.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 500.0;
-    let max_depth = 50;
+    let samples_per_pixel = 1000.0;
+    let max_depth = 100;
 
     //world
     let world = random_scene();
@@ -127,7 +127,7 @@ fn main() {
             let r_ = r_ as i64;
             let g_ = g_ as i64;
             let b_ = b_ as i64;
-            Color::wrt_color(&pixel_color, samples_per_pixel);
+            //Color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r_ as u8, g_ as u8, b_ as u8]);
             i_ += 1.0;
         }
