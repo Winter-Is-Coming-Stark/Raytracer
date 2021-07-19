@@ -120,7 +120,7 @@ impl Material for Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
 
-        let mut direction;
+        let direction;
         let mut rng = rand::thread_rng();
         if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > rng.gen::<f64>()
         {
