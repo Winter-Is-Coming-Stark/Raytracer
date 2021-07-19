@@ -5,11 +5,11 @@ mod color;
 mod hittable;
 mod hittable_list;
 mod material;
+mod moving_sphere;
 mod ray;
 mod rtweekend;
 mod sphere;
 mod vec3;
-mod moving_sphere;
 
 use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
@@ -18,8 +18,9 @@ use crate::camera::Camera;
 use crate::hittable::HitRecord;
 use crate::material::Metal;
 use crate::material::{Dielectric, Lambertian};
-use crate::rtweekend::{clamp, random_double};
+use crate::moving_sphere::MovingSphere;
 use crate::rtweekend::INFINITY;
+use crate::rtweekend::{clamp, random_double};
 pub use crate::vec3::Color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
@@ -29,7 +30,6 @@ pub use ray::Ray;
 use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
-use crate::moving_sphere::MovingSphere;
 
 fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -82,7 +82,7 @@ fn main() {
         aperture,
         dist_to_focus,
         0.0,
-        1.0
+        1.0,
     );
 
     //rand
@@ -158,8 +158,15 @@ pub fn random_scene() -> HittableList {
                 if choose_mat < 0.8 {
                     let albedo = Color::random() * Color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
-                    let center2 = center + Vec3::new(0.0,random_double(0.0,0.5),0.0);
-                    world.add(Rc::new(MovingSphere::new(center, center2,0.0,1.0,0.2 ,sphere_material.clone())));
+                    let center2 = center + Vec3::new(0.0, random_double(0.0, 0.5), 0.0);
+                    world.add(Rc::new(MovingSphere::new(
+                        center,
+                        center2,
+                        0.0,
+                        1.0,
+                        0.2,
+                        sphere_material.clone(),
+                    )));
                 } else if choose_mat < 0.95 {
                     let albedo = Color::random_range(0.5, 1.0);
                     let fuzz = rng.gen_range(0.0..0.5);

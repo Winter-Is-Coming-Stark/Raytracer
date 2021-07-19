@@ -1,7 +1,7 @@
-use crate::HitRecord;
 use crate::material::{Lambertian, Material};
 use crate::vec3::Color;
 use crate::vec3::Point3;
+use crate::HitRecord;
 use crate::Vec3;
 use crate::{Hittable, Ray};
 use std::rc::Rc;
