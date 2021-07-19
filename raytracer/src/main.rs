@@ -162,11 +162,8 @@ pub fn random_scene() -> BvhNode {
                     let albedo = Color::random() * Color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
                     let center2 = center + Vec3::new(0.0, random_double(0.0, 0.5), 0.0);
-                    world.add(Rc::new(MovingSphere::new(
+                    world.add(Rc::new(Sphere::new(
                         center,
-                        center2,
-                        0.0,
-                        1.0,
                         0.2,
                         sphere_material.clone(),
                     )));
