@@ -75,7 +75,7 @@ impl BvhNode{
     ) -> Self{
         BvhNode::new(
             &list.objects,
-            1,
+            0,
             list.objects.len(),
             time0,
             time1
