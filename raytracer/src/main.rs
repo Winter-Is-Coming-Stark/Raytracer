@@ -34,7 +34,7 @@ use std::rc::Rc;
 pub use vec3::Vec3;
 use crate::bvh::BvhNode;
 
-fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
+fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
     let mut rec = HitRecord::new();
 
     if depth <= 0 {
@@ -127,7 +127,7 @@ fn main() {
             let r_ = r_ as i64;
             let g_ = g_ as i64;
             let b_ = b_ as i64;
-            //Color::wrt_color(&pixel_color, samples_per_pixel);
+            Color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r_ as u8, g_ as u8, b_ as u8]);
             i_ += 1.0;
         }
@@ -138,7 +138,7 @@ fn main() {
     bar.finish();
 }
 
-pub fn random_scene() -> BvhNode {
+pub fn random_scene() -> HittableList {
     let mut world = HittableList::new_default();
 
     let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
@@ -181,7 +181,7 @@ pub fn random_scene() -> BvhNode {
         }
         a += 1.0;
     }
-    /*
+
     let material1 = Rc::new(Dielectric::new(1.5));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
@@ -201,10 +201,11 @@ pub fn random_scene() -> BvhNode {
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
-    )));*/
+    )));
     BvhNode::new_(
         &world,
         0.0,
         1.0
-    )
+    );
+    world
 }
