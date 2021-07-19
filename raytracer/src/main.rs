@@ -181,7 +181,7 @@ pub fn random_scene() -> BvhNode {
         }
         a += 1.0;
     }
-
+    /*
     let material1 = Rc::new(Dielectric::new(1.5));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
@@ -201,7 +201,7 @@ pub fn random_scene() -> BvhNode {
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
-    )));
+    )));*/
     BvhNode::new_(
         &world,
         0.0,
