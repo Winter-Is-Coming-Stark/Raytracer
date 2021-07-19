@@ -9,6 +9,7 @@ mod ray;
 mod rtweekend;
 mod sphere;
 mod vec3;
+mod moving_sphere;
 
 use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
@@ -17,7 +18,7 @@ use crate::camera::Camera;
 use crate::hittable::HitRecord;
 use crate::material::Metal;
 use crate::material::{Dielectric, Lambertian};
-use crate::rtweekend::clamp;
+use crate::rtweekend::{clamp, random_double};
 use crate::rtweekend::INFINITY;
 pub use crate::vec3::Color;
 use crate::vec3::Point3;
@@ -28,6 +29,7 @@ pub use ray::Ray;
 use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
+use crate::moving_sphere::MovingSphere;
 
 fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -56,15 +58,16 @@ fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
 
 fn main() {
     //image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width: f64 = 1200.0;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 500.0;
+    let samples_per_pixel = 100.0;
     let max_depth = 50;
 
+    //world
     let world = random_scene();
-    //camera
 
+    //camera
     let lookfrom = Point3::new(12.0, 2.0, 3.0);
     let lookat = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
@@ -78,6 +81,8 @@ fn main() {
         aspect_ratio,
         aperture,
         dist_to_focus,
+        0.0,
+        1.0
     );
 
     //rand
@@ -153,7 +158,8 @@ pub fn random_scene() -> HittableList {
                 if choose_mat < 0.8 {
                     let albedo = Color::random() * Color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material.clone())));
+                    let center2 = center + Vec3::new(0.0,random_double(0.0,0.5),0.0);
+                    world.add(Rc::new(MovingSphere::new(center, center2,0.0,1.0,0.2 ,sphere_material.clone())));
                 } else if choose_mat < 0.95 {
                     let albedo = Color::random_range(0.5, 1.0);
                     let fuzz = rng.gen_range(0.0..0.5);
