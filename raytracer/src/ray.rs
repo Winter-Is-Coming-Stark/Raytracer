@@ -1,4 +1,3 @@
-use crate::vec3::color;
 use crate::vec3::Point3;
 use crate::Vec3;
 

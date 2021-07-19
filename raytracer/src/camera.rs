@@ -1,5 +1,4 @@
 use crate::rtweekend::degrees_to_radians;
-use crate::vec3::color;
 use crate::vec3::Point3;
 use crate::Ray;
 use crate::Vec3;

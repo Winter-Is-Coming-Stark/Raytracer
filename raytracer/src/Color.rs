@@ -1,6 +1,6 @@
 use crate::rtweekend::clamp;
 use crate::vec3::color;
-use crate::Vec3;
+
 impl color {
     pub fn wrt_color(pixel_color: &color, samples_per_pixel: f64) {
         let mut r = pixel_color.x;

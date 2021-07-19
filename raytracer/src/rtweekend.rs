@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 pub const infinity: f64 = f64::INFINITY;
 pub const pi: f64 = std::f64::consts::PI;
 

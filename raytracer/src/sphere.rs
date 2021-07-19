@@ -1,5 +1,3 @@
-use crate::hittable::hit_record;
-use crate::hittable::Hittable;
 use crate::material::Material;
 use crate::Point3;
 use crate::Ray;
@@ -9,11 +7,11 @@ use std::rc::Rc;
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    mat_ptr: Rc<Material>,
+    mat_ptr: Rc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(cen: Point3, r: f64, m: Rc<Material>) -> Sphere {
+    pub fn new(cen: Point3, r: f64, m: Rc<dyn Material>) -> Sphere {
         Sphere {
             center: cen,
             radius: r,
@@ -23,12 +21,12 @@ impl Sphere {
 }
 
 impl crate::hittable::Hittable for Sphere {
-    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut crate::hittable::hit_record) -> bool {
+    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut crate::hittable::HitRecord) -> bool {
         let oc = r.origin() - self.center;
         let a = r.direction().squared_length();
         let half_b = Vec3::dot(r.direction(), oc);
         let c = oc.squared_length() - self.radius * self.radius;
-        let delta = half_b * half_b - a * c;
+        let delta = half_b.powi(2) - a * c;
         if delta > 0.0 {
             let root = delta.sqrt();
             let mut t = (-half_b - root) / a;

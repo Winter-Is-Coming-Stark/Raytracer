@@ -15,26 +15,23 @@ use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
 use crate::camera::Camera;
-use crate::hittable::hit_record;
+use crate::hittable::HitRecord;
 use crate::material::{Dielectric, Lambertian};
-use crate::material::{Material, Metal};
+use crate::material::Metal;
 use crate::rtweekend::clamp;
 use crate::rtweekend::infinity;
 pub use crate::vec3::color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
-pub use hittable_list::Hittable_list;
-use image::flat::NormalForm::ColumnMajorPacked;
+pub use hittable_list::HittableList;
 use rand::Rng;
 pub use ray::Ray;
-use rtweekend::pi;
 use sphere::Sphere;
-use std::collections::hash_map::Entry::Vacant;
 use std::rc::Rc;
 pub use vec3::Vec3;
 
-fn ray_color(r: Ray, world: &Hittable_list, depth: i32) -> color {
-    let mut rec = hit_record::new();
+fn ray_color(r: Ray, world: &HittableList, depth: i32) -> color {
+    let mut rec = HitRecord::new();
 
     if depth <= 0 {
         return color::new(0.0, 0.0, 0.0);
@@ -63,7 +60,7 @@ fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
     let a = r.direction().squared_length();
     let half_b = Vec3::dot(oc, r.direction());
     let c = oc.squared_length() - radius * radius;
-    let delta = half_b * half_b - a * c;
+    let delta = half_b.powi(2) - a * c;
 
     if delta < 0.0 {
         return -1.0;
@@ -105,51 +102,51 @@ fn main() {
     println!("P3\n{} {} \n255\n", image_width, image_height);
     let mut img: RgbImage = ImageBuffer::new(image_width as u32, image_height as u32);
     let bar = ProgressBar::new(image_width as u64);
-    let mut j = image_height - 1.0;
+    let mut j_ = image_height - 1.0;
 
-    while j >= 0.0 {
-        let mut i = 0.0;
-        while i < image_width {
-            let mut s = 0.0;
+    while j_ >= 0.0 {
+        let mut i_ = 0.0;
+        while i_ < image_width {
+            let mut s_ = 0.0;
             let mut pixel_color = color::new(0.0, 0.0, 0.0);
-            while s < samples_per_pixel {
-                let u = (i + rng.gen::<f64>()) / (image_width - 1.0);
-                let v = (j + rng.gen::<f64>()) / (image_height - 1.0);
-                let r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, &world, max_depth);
-                s = s + 1.0;
+            while s_ < samples_per_pixel {
+                let u_ = (i_ + rng.gen::<f64>()) / (image_width - 1.0);
+                let v_ = (j_ + rng.gen::<f64>()) / (image_height - 1.0);
+                let r_ = cam.get_ray(u_, v_);
+                pixel_color += ray_color(r_, &world, max_depth);
+                s_ = s_ + 1.0;
             }
             //color write
-            let pixel = img.get_pixel_mut(i as u32, j as u32);
-            let mut r = pixel_color.x;
-            let mut g = pixel_color.y;
-            let mut b = pixel_color.z;
+            let pixel = img.get_pixel_mut(i_ as u32, j_ as u32);
+            let mut r_ = pixel_color.x;
+            let mut g_ = pixel_color.y;
+            let mut b_ = pixel_color.z;
             let scale = 1.0 / samples_per_pixel;
-            r = (scale * r).sqrt();
-            g = (scale * g).sqrt();
-            b = (scale * b).sqrt();
-            clamp(r, 0.0, 0.999);
-            clamp(g, 0.0, 0.999);
-            clamp(b, 0.0, 0.999);
-            let r = r * 255.999;
-            let g = g * 255.999;
-            let b = b * 255.999;
-            let r = r as i64;
-            let g = g as i64;
-            let b = b as i64;
+            r_ = (scale * r_).sqrt();
+            g_ = (scale * g_).sqrt();
+            b_ = (scale * b_).sqrt();
+            clamp(r_, 0.0, 0.999);
+            clamp(g_, 0.0, 0.999);
+            clamp(b_, 0.0, 0.999);
+            let r_ = r_ * 255.999;
+            let g_ = g_ * 255.999;
+            let b_ = b_ * 255.999;
+            let r_ = r_ as i64;
+            let g_ = g_ as i64;
+            let b_ = b_ as i64;
             color::wrt_color(&pixel_color, samples_per_pixel);
-            *pixel = image::Rgb([r as u8, g as u8, b as u8]);
-            i = i + 1.0;
+            *pixel = image::Rgb([r_ as u8, g_ as u8, b_ as u8]);
+            i_ = i_ + 1.0;
         }
         bar.inc(1);
-        j = j - 1.0;
+        j_ = j_ - 1.0;
     }
     img.save("output/test.png").unwrap();
     bar.finish();
 }
 
-pub fn random_scene() -> Hittable_list {
-    let mut world = Hittable_list::new_default();
+pub fn random_scene() -> HittableList {
+    let mut world = HittableList::new_default();
 
     let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(

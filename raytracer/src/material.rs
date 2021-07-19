@@ -1,16 +1,14 @@
-use crate::hit_record;
+use crate::hittable::HitRecord;
 use crate::vec3::color;
-use crate::vec3::Point3;
 use crate::Vec3;
-use crate::{ray_color, Ray};
+use crate::Ray;
 use rand::Rng;
-use std::collections::hash_map::Entry::Vacant;
 
 pub trait Material {
     fn scatter(
         &self,
         r_in: Ray,
-        rec: &hit_record,
+        rec: &HitRecord,
         attenuation: &mut color,
         scattered: &mut Ray,
     ) -> bool;
@@ -31,13 +29,13 @@ impl Material for Lambertian {
     fn scatter(
         &self,
         r_in: Ray,
-        rec: &hit_record,
+        rec: &HitRecord,
         attenuation: &mut color,
         scattered: &mut Ray,
     ) -> bool {
         let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
 
-        if (scatter_direction.near_zero()) {
+        if scatter_direction.near_zero() {
             scatter_direction = rec.normal;
         }
 
@@ -70,7 +68,7 @@ impl Material for Metal {
     fn scatter(
         &self,
         r_in: Ray,
-        rec: &hit_record,
+        rec: &HitRecord,
         attenuation: &mut color,
         scattered: &mut Ray,
     ) -> bool {
@@ -102,7 +100,7 @@ impl Material for Dielectric {
     fn scatter(
         &self,
         r_in: Ray,
-        rec: &hit_record,
+        rec: &HitRecord,
         attenuation: &mut color,
         scattered: &mut Ray,
     ) -> bool {

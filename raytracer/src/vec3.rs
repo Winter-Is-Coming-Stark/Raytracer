@@ -1,6 +1,5 @@
-use f64;
 use rand::Rng;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Clone, Debug, PartialEq, Copy)]
 pub struct Vec3 {
@@ -8,7 +7,6 @@ pub struct Vec3 {
     pub y: f64,
     pub z: f64,
 }
-use std::collections::hash_map::Entry::Vacant;
 pub use Vec3 as color;
 pub use Vec3 as Point3;
 
@@ -73,13 +71,13 @@ impl Vec3 {
     }
 
     pub fn random_in_unit_sphere() -> Vec3 {
-        while true {
+        loop{
             let p = Vec3::random_range(-1.0, 1.0);
             if p.squared_length() < 1.0 {
                 return p;
             }
         }
-        Vec3::zero()
+
     }
 
     pub fn random_unit_vector() -> Vec3 {
@@ -104,13 +102,12 @@ impl Vec3 {
 
     pub fn random_in_unit_disk() -> Vec3 {
         let mut rng = rand::thread_rng();
-        while true {
+        loop {
             let p = Vec3::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), 0.0);
             if p.squared_length() < 1.0 {
                 return p;
             }
         }
-        Vec3::zero()
     }
 }
 

@@ -5,7 +5,7 @@ use crate::{color, Point3};
 use std::rc::Rc;
 
 #[derive(Clone)]
-pub struct hit_record {
+pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
     pub front_face: bool,
@@ -13,9 +13,9 @@ pub struct hit_record {
     pub mat_ptr: Rc<dyn Material>,
 }
 
-impl hit_record {
-    pub fn new() -> hit_record {
-        hit_record {
+impl HitRecord {
+    pub fn new() -> HitRecord {
+        HitRecord {
             p: Point3::zero(),
             normal: Vec3::zero(),
             front_face: false,
@@ -34,5 +34,5 @@ impl hit_record {
 }
 
 pub trait Hittable {
-    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut hit_record) -> bool;
+    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool;
 }

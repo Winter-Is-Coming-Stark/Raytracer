@@ -1,30 +1,29 @@
-use crate::hittable::hit_record;
+use crate::hittable::HitRecord;
 use crate::hittable::Hittable;
 use crate::Ray;
 use std::rc::Rc;
-use std::vec;
 
 #[derive(Clone)]
-pub struct Hittable_list {
+pub struct HittableList {
     pub objects: Vec<Rc<dyn Hittable>>,
 }
 
-impl Hittable_list {
+impl HittableList {
     pub fn add(&mut self, object: Rc<dyn Hittable>) {
         self.objects.push(object);
     }
 
-    pub fn new(object: Rc<dyn Hittable>) -> Hittable_list {
+    pub fn new(object: Rc<dyn Hittable>) -> HittableList {
         let mut objectsTmp: Vec<Rc<dyn Hittable>> = Vec::new();
         objectsTmp.push(object);
-        Hittable_list {
+        HittableList {
             objects: objectsTmp,
         }
     }
 
-    pub fn new_default() -> Hittable_list {
+    pub fn new_default() -> HittableList {
         let mut objectsTmp: Vec<Rc<dyn Hittable>> = Vec::new();
-        Hittable_list {
+        HittableList {
             objects: objectsTmp,
         }
     }
@@ -34,9 +33,9 @@ impl Hittable_list {
     }
 }
 
-impl crate::hittable::Hittable for Hittable_list {
-    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut hit_record) -> bool {
-        let mut tmp_rec: hit_record = hit_record::new();
+impl crate::hittable::Hittable for HittableList {
+    fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {
+        let mut tmp_rec: HitRecord = HitRecord::new();
         let mut hit_anything = false;
         let mut closest_so_far = t_max;
 
