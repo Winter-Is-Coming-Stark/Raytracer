@@ -1,5 +1,5 @@
 use crate::hittable::HitRecord;
-use crate::vec3::color;
+use crate::vec3::Color;
 use crate::Ray;
 use crate::Vec3;
 use rand::Rng;
@@ -9,18 +9,18 @@ pub trait Material {
         &self,
         r_in: Ray,
         rec: &HitRecord,
-        attenuation: &mut color,
+        attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool;
 }
 
 //Lambertian
 pub struct Lambertian {
-    albedo: color,
+    albedo: Color,
 }
 
 impl Lambertian {
-    pub fn new(a: color) -> Lambertian {
+    pub fn new(a: Color) -> Lambertian {
         Lambertian { albedo: a }
     }
 }
@@ -30,7 +30,7 @@ impl Material for Lambertian {
         &self,
         _r_in: Ray,
         rec: &HitRecord,
-        attenuation: &mut color,
+        attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
         let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
@@ -47,12 +47,12 @@ impl Material for Lambertian {
 
 //metal
 pub struct Metal {
-    albedo: color,
+    albedo: Color,
     fuzz: f64,
 }
 
 impl Metal {
-    pub fn new(a: color, f: f64) -> Metal {
+    pub fn new(a: Color, f: f64) -> Metal {
         let mut f1 = f;
         if f1 > 1.0 {
             f1 = 1.0
@@ -69,7 +69,7 @@ impl Material for Metal {
         &self,
         r_in: Ray,
         rec: &HitRecord,
-        attenuation: &mut color,
+        attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
         let reflected = Vec3::reflect(r_in.direction().unit(), rec.normal);
@@ -101,10 +101,10 @@ impl Material for Dielectric {
         &self,
         r_in: Ray,
         rec: &HitRecord,
-        attenuation: &mut color,
+        attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        *attenuation = color::ones();
+        *attenuation = Color::ones();
         let refraction_ratio = if rec.front_face {
             1.0 / self.ir
         } else {

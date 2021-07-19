@@ -7,7 +7,7 @@ pub struct Vec3 {
     pub y: f64,
     pub z: f64,
 }
-pub use Vec3 as color;
+pub use Vec3 as Color;
 pub use Vec3 as Point3;
 
 impl Vec3 {
@@ -85,7 +85,7 @@ impl Vec3 {
 
     pub fn near_zero(&self) -> bool {
         let s = 1e-8;
-        return self.x.abs() < s && self.y.abs() < s && self.z.abs() < s;
+        self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
     }
 
     pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {

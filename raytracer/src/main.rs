@@ -1,7 +1,7 @@
 extern crate rand;
 
-mod Color;
 mod camera;
+mod color;
 mod hittable;
 mod hittable_list;
 mod material;
@@ -10,7 +10,6 @@ mod rtweekend;
 mod sphere;
 mod vec3;
 
-#[allow(clippy::float_cmp)]
 use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
@@ -19,8 +18,8 @@ use crate::hittable::HitRecord;
 use crate::material::Metal;
 use crate::material::{Dielectric, Lambertian};
 use crate::rtweekend::clamp;
-use crate::rtweekend::infinity;
-pub use crate::vec3::color;
+use crate::rtweekend::INFINITY;
+pub use crate::vec3::Color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
 pub use hittable_list::HittableList;
@@ -30,43 +29,29 @@ use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
 
-fn ray_color(r: Ray, world: &HittableList, depth: i32) -> color {
+fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
     let mut rec = HitRecord::new();
 
     if depth <= 0 {
-        return color::new(0.0, 0.0, 0.0);
+        return Color::new(0.0, 0.0, 0.0);
     }
-    if world.hit(r, 0.001, infinity, &mut rec) {
+    if world.hit(r, 0.001, INFINITY, &mut rec) {
         //let target = rec.p + rec.normal + Vec3::random_unit_vector();
         //return ray_color(Ray::new(rec.p, target - rec.p), world, depth - 1) * 0.5;
         let mut scattered = Ray::default_new();
-        let mut attenuation = color::zero();
+        let mut attenuation = Color::zero();
         if rec
             .mat_ptr
             .scatter(r, &rec, &mut attenuation, &mut scattered)
         {
             return ray_color(scattered, world, depth - 1) * attenuation;
         }
-        color::zero();
+        Color::zero();
     }
 
     let unit_direction = r.direction().unit();
     let t = (unit_direction.y + 1.0) * 0.5;
-    return color::new(1.0, 1.0, 1.0) * (1.0 - t) + color::new(0.5, 0.7, 1.0) * t;
-}
-
-fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
-    let oc = r.origin() - center;
-    let a = r.direction().squared_length();
-    let half_b = Vec3::dot(oc, r.direction());
-    let c = oc.squared_length() - radius * radius;
-    let delta = half_b.powi(2) - a * c;
-
-    if delta < 0.0 {
-        return -1.0;
-    }
-
-    return (-half_b - delta.sqrt()) / a;
+    Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
 }
 
 fn main() {
@@ -108,13 +93,13 @@ fn main() {
         let mut i_ = 0.0;
         while i_ < image_width {
             let mut s_ = 0.0;
-            let mut pixel_color = color::new(0.0, 0.0, 0.0);
+            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
             while s_ < samples_per_pixel {
                 let u_ = (i_ + rng.gen::<f64>()) / (image_width - 1.0);
                 let v_ = (j_ + rng.gen::<f64>()) / (image_height - 1.0);
                 let r_ = cam.get_ray(u_, v_);
                 pixel_color += ray_color(r_, &world, max_depth);
-                s_ = s_ + 1.0;
+                s_ += 1.0;
             }
             //color write
             let pixel = img.get_pixel_mut(i_ as u32, j_ as u32);
@@ -134,12 +119,12 @@ fn main() {
             let r_ = r_ as i64;
             let g_ = g_ as i64;
             let b_ = b_ as i64;
-            color::wrt_color(&pixel_color, samples_per_pixel);
+            Color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r_ as u8, g_ as u8, b_ as u8]);
-            i_ = i_ + 1.0;
+            i_ += 1.0;
         }
         bar.inc(1);
-        j_ = j_ - 1.0;
+        j_ -= 1.0;
     }
     img.save("output/test.png").unwrap();
     bar.finish();
@@ -148,11 +133,11 @@ fn main() {
 pub fn random_scene() -> HittableList {
     let mut world = HittableList::new_default();
 
-    let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(color::new(0.5, 0.5, 0.5)));
+    let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
-        ground_material.clone(),
+        ground_material,
     )));
 
     let mut rng = rand::thread_rng();
@@ -166,11 +151,11 @@ pub fn random_scene() -> HittableList {
 
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 if choose_mat < 0.8 {
-                    let albedo = color::random() * color::random();
+                    let albedo = Color::random() * Color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
                     world.add(Rc::new(Sphere::new(center, 0.2, sphere_material.clone())));
                 } else if choose_mat < 0.95 {
-                    let albedo = color::random_range(0.5, 1.0);
+                    let albedo = Color::random_range(0.5, 1.0);
                     let fuzz = rng.gen_range(0.0..0.5);
                     let sphere_material = Rc::new(Metal::new(albedo, fuzz));
                     world.add(Rc::new(Sphere::new(center, 0.2, sphere_material.clone())));
@@ -179,30 +164,30 @@ pub fn random_scene() -> HittableList {
                     world.add(Rc::new(Sphere::new(center, 0.2, sphere_material.clone())));
                 }
             }
-            b = b + 1.0;
+            b += 1.0;
         }
-        a = a + 1.0;
+        a += 1.0;
     }
 
     let material1 = Rc::new(Dielectric::new(1.5));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
-        material1.clone(),
+        material1,
     )));
 
-    let material2 = Rc::new(Lambertian::new(color::new(0.4, 0.2, 0.1)));
+    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
     world.add(Rc::new(Sphere::new(
         Point3::new(-4.0, 1.0, 0.0),
         1.0,
-        material2.clone(),
+        material2,
     )));
 
-    let material3 = Rc::new(Metal::new(color::new(0.7, 0.6, 0.5), 0.0));
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
     world.add(Rc::new(Sphere::new(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
-        material3.clone(),
+        material3,
     )));
     world
 }

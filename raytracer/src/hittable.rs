@@ -1,7 +1,7 @@
 use crate::material::{Lambertian, Material};
 use crate::Ray;
 use crate::Vec3;
-use crate::{color, Point3};
+use crate::{Color, Point3};
 use std::rc::Rc;
 
 #[derive(Clone)]
@@ -20,7 +20,7 @@ impl HitRecord {
             normal: Vec3::zero(),
             front_face: false,
             t: 0.0,
-            mat_ptr: Rc::new(Lambertian::new(color::new(0.0, 0.0, 0.0))),
+            mat_ptr: Rc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))),
         }
     }
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &mut Vec3) {
@@ -30,6 +30,12 @@ impl HitRecord {
         } else {
             -(*outward_normal)
         };
+    }
+}
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
