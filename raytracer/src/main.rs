@@ -16,8 +16,8 @@ use indicatif::ProgressBar;
 
 use crate::camera::Camera;
 use crate::hittable::HitRecord;
-use crate::material::{Dielectric, Lambertian};
 use crate::material::Metal;
+use crate::material::{Dielectric, Lambertian};
 use crate::rtweekend::clamp;
 use crate::rtweekend::infinity;
 pub use crate::vec3::color;

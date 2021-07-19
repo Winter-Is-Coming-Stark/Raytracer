@@ -1,7 +1,7 @@
 use crate::hittable::HitRecord;
 use crate::vec3::color;
-use crate::Vec3;
 use crate::Ray;
+use crate::Vec3;
 use rand::Rng;
 
 pub trait Material {

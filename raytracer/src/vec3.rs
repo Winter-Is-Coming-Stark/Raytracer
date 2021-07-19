@@ -71,13 +71,12 @@ impl Vec3 {
     }
 
     pub fn random_in_unit_sphere() -> Vec3 {
-        loop{
+        loop {
             let p = Vec3::random_range(-1.0, 1.0);
             if p.squared_length() < 1.0 {
                 return p;
             }
         }
-
     }
 
     pub fn random_unit_vector() -> Vec3 {
