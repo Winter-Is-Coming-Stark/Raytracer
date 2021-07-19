@@ -34,7 +34,7 @@ use std::rc::Rc;
 pub use vec3::Vec3;
 use crate::bvh::BvhNode;
 
-fn ray_color(r: Ray, world: &HittableList, depth: i32) -> Color {
+fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
 
     if depth <= 0 {
@@ -138,7 +138,7 @@ fn main() {
     bar.finish();
 }
 
-pub fn random_scene() -> HittableList {
+pub fn random_scene() -> BvhNode {
     let mut world = HittableList::new_default();
 
     let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
@@ -206,6 +206,5 @@ pub fn random_scene() -> HittableList {
         &world,
         0.0,
         1.0
-    );
-    world
+    )
 }

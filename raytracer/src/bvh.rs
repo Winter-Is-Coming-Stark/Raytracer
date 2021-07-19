@@ -133,7 +133,8 @@ impl Hittable for BvhNode{
         }
 
         let hit_left = self.left.hit(r,t_min,t_max,rec);
-        let hit_right = self.right.hit(r,t_min,t_max,rec);
+        let maxi = if hit_left {rec.t} else {t_max};
+        let hit_right = self.right.hit(r,t_min,maxi,rec);
 
         hit_left || hit_right
     }
