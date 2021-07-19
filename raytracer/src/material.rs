@@ -28,7 +28,7 @@ impl Lambertian {
 impl Material for Lambertian {
     fn scatter(
         &self,
-        r_in: Ray,
+        _r_in: Ray,
         rec: &HitRecord,
         attenuation: &mut color,
         scattered: &mut Ray,
@@ -120,7 +120,7 @@ impl Material for Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
 
-        let mut direction = Vec3::zero();
+        let mut direction;
         let mut rng = rand::thread_rng();
         if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > rng.gen::<f64>()
         {

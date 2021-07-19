@@ -22,7 +22,7 @@ impl HittableList {
     }
 
     pub fn new_default() -> HittableList {
-        let mut objectsTmp: Vec<Rc<dyn Hittable>> = Vec::new();
+        let objectsTmp: Vec<Rc<dyn Hittable>> = Vec::new();
         HittableList {
             objects: objectsTmp,
         }
