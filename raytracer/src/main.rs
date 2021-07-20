@@ -12,6 +12,7 @@ mod rtweekend;
 mod sphere;
 mod vec3;
 mod bvh;
+mod texture;
 
 use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
@@ -33,6 +34,7 @@ use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
 use crate::bvh::BvhNode;
+use crate::texture::CheckerTexture;
 
 fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -61,11 +63,11 @@ fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
 
 fn main() {
     //image
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width: f64 = 1200.0;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 1000.0;
-    let max_depth = 100;
+    let samples_per_pixel = 100.0;
+    let max_depth = 50;
 
     //world
     let world = random_scene();
@@ -140,12 +142,13 @@ fn main() {
 
 pub fn random_scene() -> BvhNode {
     let mut world = HittableList::new_default();
+    let checker = Rc::new(CheckerTexture::new_by_color(Color::new(0.2,0.3,0.1),Color::new(0.9,0.9,0.9)));
 
     let ground_material: Rc<Lambertian> = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
-        ground_material,
+        Rc::new(Lambertian::new_by_pointer(checker)),
     )));
 
     let mut rng = rand::thread_rng();
@@ -162,8 +165,11 @@ pub fn random_scene() -> BvhNode {
                     let albedo = Color::random() * Color::random();
                     let sphere_material = Rc::new(Lambertian::new(albedo));
                     let center2 = center + Vec3::new(0.0, random_double(0.0, 0.5), 0.0);
-                    world.add(Rc::new(Sphere::new(
+                    world.add(Rc::new(MovingSphere::new(
                         center,
+                        center2,
+                        0.0,
+                        1.0,
                         0.2,
                         sphere_material.clone(),
                     )));

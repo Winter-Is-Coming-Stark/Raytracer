@@ -12,6 +12,8 @@ pub struct HitRecord {
     pub front_face: bool,
     pub t: f64,
     pub mat_ptr: Rc<dyn Material>,
+    pub u: f64,
+    pub v: f64
 }
 
 impl HitRecord {
@@ -21,6 +23,8 @@ impl HitRecord {
             normal: Vec3::zero(),
             front_face: false,
             t: 0.0,
+            u: 0.0,
+            v: 0.0,
             mat_ptr: Rc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))),
         }
     }

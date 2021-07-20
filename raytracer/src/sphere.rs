@@ -5,6 +5,7 @@ use crate::Vec3;
 use std::rc::Rc;
 use crate::aabb;
 use crate::aabb::AABB;
+use crate::rtweekend::PI;
 
 pub struct Sphere {
     center: Point3,
@@ -19,6 +20,18 @@ impl Sphere {
             radius: r,
             mat_ptr: m,
         }
+    }
+
+    pub fn get_sphere_uv(
+        p: Point3,
+        u: &mut f64,
+        v: &mut f64
+    ){
+        let theta = (-p.y).acos();
+        let phi = (-p.z).atan2(p.x) + PI;
+
+        *u = phi / (2.0 * PI);
+        *v = theta / PI;
     }
 }
 
@@ -37,6 +50,7 @@ impl crate::hittable::Hittable for Sphere {
                 rec.p = r.at(t);
                 let mut outward_normal = (rec.p - self.center) / self.radius;
                 rec.set_face_normal(&r, &mut outward_normal);
+                Sphere::get_sphere_uv(outward_normal,&mut rec.u,&mut rec.v);
                 rec.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
@@ -46,6 +60,7 @@ impl crate::hittable::Hittable for Sphere {
                 rec.p = r.at(t);
                 let mut outward_normal = (rec.p - self.center) / self.radius;
                 rec.set_face_normal(&r, &mut outward_normal);
+                Sphere::get_sphere_uv(outward_normal,&mut rec.u,&mut rec.v);
                 rec.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
