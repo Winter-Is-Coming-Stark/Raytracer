@@ -38,7 +38,8 @@ pub use vec3::Vec3;
 use crate::bvh::BvhNode;
 use crate::texture::{CheckerTexture, ImageTexture};
 use crate::texture::NoiseTexture;
-use crate::arrect::XYRect;
+use crate::arrect::{XYRect, YZRect, XZRect};
+use image::imageops::FilterType::Lanczos3;
 
 fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -63,10 +64,10 @@ fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
 
 fn main() {
     //image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width: f64 = 400.0;
+    let aspect_ratio = 1.0;
+    let image_width: f64 = 600.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 400.0;
+    let samples_per_pixel = 200.0;
     let max_depth = 50;
 
     //world
@@ -92,12 +93,12 @@ fn main() {
     );
     */
 
-    let world = simple_light();
+    let world = cornell_box();
     let background = Vec3::new(0.0,0.0,0.0);
 
     //camera
-    let lookfrom = Point3::new(26.0, 3.0, 6.0);
-    let lookat = Point3::new(0.0, 2.0, 0.0);
+    let lookfrom = Point3::new(278.0, 278.0, -800.0);
+    let lookat = Point3::new(278.0, 278.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let aperture = 0.0;
@@ -105,7 +106,7 @@ fn main() {
         lookfrom,
         lookat,
         vup,
-        20.0,
+        40.0,
         aspect_ratio,
         aperture,
         dist_to_focus,
@@ -158,7 +159,7 @@ fn main() {
         bar.inc(1);
         j_ += 1.0;
     }
-    img.save("test.png").unwrap();
+    img.save("output/test.jpg").unwrap();
     bar.finish();
 }
 
@@ -312,6 +313,60 @@ fn simple_light() -> BvhNode{
 
     let difflight = Rc::new(DiffuseLight::new_by_color(Color::new(4.0,4.0,4.0)));
     objects.add(Rc::new(XYRect::new(3.0,5.0,1.0,3.0,-2.0,difflight.clone())));
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
+    )
+}
+
+fn cornell_box() -> BvhNode{
+    let mut objects = HittableList::new_default();
+    let red = Rc::new(Lambertian::new(Color::new(0.65,0.05,0.05)));
+    let white = Rc::new(Lambertian::new(Color::new(0.73,0.73,0.73)));
+    let green = Rc::new(Lambertian::new(Color::new(0.12,0.45,0.15)));
+    let light = Rc::new(Lambertian::new(Color::new(15.0,15.0,15.0)));
+
+    objects.add(Rc::new(YZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        green.clone()
+    )));
+    objects.add(Rc::new(YZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        0.0,
+        red.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        213.0,
+        343.0,
+        227.0,
+        332.0,
+        554.0,
+        light.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        white.clone()
+    )));
+    objects.add(Rc::new(XYRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        white.clone()
+    )));
     BvhNode::new_(
         &objects,
         0.0,
