@@ -163,7 +163,7 @@ impl Hittable for RotateY{
         let mut normal = rec.normal;
 
         p_.x = self.cos_theta * p_.x + self.sin_theta * p_.z;
-        p_.z = -self.sin_theta * p_.x + self.sin_theta * p_.z;
+        p_.z = -self.sin_theta * p_.x + self.cos_theta * p_.z;
 
         normal.x = self.cos_theta * normal.x + self.sin_theta * normal.z;
         normal.z = -self.sin_theta * normal.x + self.cos_theta * normal.z;
