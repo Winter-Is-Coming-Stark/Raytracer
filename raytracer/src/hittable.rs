@@ -165,8 +165,8 @@ impl Hittable for RotateY{
         p_.x = self.cos_theta * p_.x + self.sin_theta * p_.z;
         p_.z = -self.sin_theta * p_.x + self.sin_theta * p_.z;
 
-        normal.x = self.cos_theta * normal.x + self.sin_theta * p_.z;
-        normal.z = -self.sin_theta * normal.x + self.cos_theta * p_.z;
+        normal.x = self.cos_theta * normal.x + self.sin_theta * normal.z;
+        normal.z = -self.sin_theta * normal.x + self.cos_theta * normal.z;
 
         rec.p = p_;
         rec.set_face_normal(&rotated_r,&mut normal);
