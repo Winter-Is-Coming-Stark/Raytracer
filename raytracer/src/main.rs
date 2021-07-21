@@ -325,7 +325,7 @@ fn cornell_box() -> BvhNode{
     let red = Rc::new(Lambertian::new(Color::new(0.65,0.05,0.05)));
     let white = Rc::new(Lambertian::new(Color::new(0.73,0.73,0.73)));
     let green = Rc::new(Lambertian::new(Color::new(0.12,0.45,0.15)));
-    let light = Rc::new(Lambertian::new(Color::new(15.0,15.0,15.0)));
+    let light = Rc::new(DiffuseLight::new_by_color(Color::new(15.0,15.0,15.0)));
 
     objects.add(Rc::new(YZRect::new(
         0.0,
