@@ -162,7 +162,7 @@ fn main() {
         bar.inc(1);
         j_ += 1.0;
     }
-    img.save("test.jpg").unwrap();
+    img.save("output/test.jpg").unwrap();
     bar.finish();
 }
 
