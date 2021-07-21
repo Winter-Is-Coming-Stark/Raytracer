@@ -170,6 +170,7 @@ impl Hittable for RotateY{
 
         rec.p = p_;
         rec.set_face_normal(&rotated_r,&mut normal);
+
         true
     }
 

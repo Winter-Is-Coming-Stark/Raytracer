@@ -16,7 +16,7 @@ mod texture;
 mod perlin;
 mod arrect;
 mod _box;
-//mod constant_medium;
+mod constant_medium;
 
 use image::{ImageBuffer, RgbImage,ImageDecoder,GenericImageView};
 use indicatif::ProgressBar;
@@ -42,6 +42,7 @@ use crate::texture::{CheckerTexture, ImageTexture};
 use crate::texture::NoiseTexture;
 use crate::arrect::{XYRect, YZRect, XZRect};
 use crate::_box::_Box;
+use crate::constant_medium::ConstantMedium;
 
 fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -161,7 +162,7 @@ fn main() {
         bar.inc(1);
         j_ += 1.0;
     }
-    img.save("output/test.jpg").unwrap();
+    img.save("test.jpg").unwrap();
     bar.finish();
 }
 
@@ -398,6 +399,92 @@ fn cornell_box() -> BvhNode{
     box2 = Rc::new(Translate::new(box2,Vec3::new(130.0,0.0,65.0)));
     objects.add(box2);
 
+
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
+    )
+}
+
+fn cornell_smoke() -> BvhNode{
+    let mut objects = HittableList::new_default();
+
+    let red = Rc::new(Lambertian::new(Color::new(0.65,0.05,0.05)));
+    let white = Rc::new(Lambertian::new(Color::new(0.73,0.73,0.73)));
+    let green = Rc::new(Lambertian::new(Color::new(0.12,0.45,0.15)));
+    let light = Rc::new(DiffuseLight::new_by_color(Color::new(7.0,7.0,7.0)));
+
+    objects.add(Rc::new(YZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        green.clone()
+    )));
+    objects.add(Rc::new(YZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        0.0,
+        red.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        213.0,
+        343.0,
+        227.0,
+        332.0,
+        554.0,
+        light.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        0.0,
+        white.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        white.clone()
+    )));
+    objects.add(Rc::new(XYRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        white.clone()
+    )));
+
+    let mut box1:Rc<dyn Hittable> = Rc::new(_Box::new(
+        Point3::new(0.0,0.0,0.0),
+        Point3::new(165.0,330.0,165.0),
+        white.clone()
+    ));
+
+    box1 = Rc::new(RotateY::new(box1,15.0));
+    box1 = Rc::new(Translate::new(box1,Vec3::new(265.0,0.0,295.0)));
+
+
+    let mut box2:Rc<dyn Hittable> = Rc::new(_Box::new(
+        Point3::new(0.0,0.0,0.0),
+        Point3::new(165.0,165.0,165.0),
+        white.clone()
+    ));
+
+    box2 = Rc::new(RotateY::new(box2,-18.0));
+    box2 = Rc::new(Translate::new(box2,Vec3::new(130.0,0.0,65.0)));
+
+    objects.add(Rc::new(ConstantMedium::new_by_color(box1,0.01,Color::new(0.0,0.0,0.0))));
+    objects.add(Rc::new(ConstantMedium::new_by_color(box2,0.01,Color::new(1.0,1.0,1.0))));
 
     BvhNode::new_(
         &objects,
