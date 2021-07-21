@@ -75,7 +75,7 @@ impl _Box{
 
 impl Hittable for _Box{
     fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {
-        self.hit(r,t_min,t_max,rec)
+        self.sides.hit(r,t_min,t_max,rec)
     }
 
     fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut AABB) -> bool {
