@@ -68,9 +68,9 @@ fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
 fn main() {
     //image
     let aspect_ratio = 1.0;
-    let image_width: f64 = 600.0;
+    let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 200.0;
+    let samples_per_pixel = 100.0;
     let max_depth = 50;
 
     //world
