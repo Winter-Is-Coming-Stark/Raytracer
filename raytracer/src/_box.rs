@@ -1,7 +1,7 @@
 use crate::{Point3, HittableList, Hittable, Ray};
 use std::rc::Rc;
 use crate::material::Material;
-use crate::arrect::XYRect;
+use crate::arrect::{XYRect, YZRect, XZRect};
 use crate::hittable::HitRecord;
 use crate::aabb::AABB;
 
@@ -36,7 +36,7 @@ impl _Box{
             ptr.clone()
         )));
 
-        tmp.sides.add(Rc::new(XYRect::new(
+        tmp.sides.add(Rc::new(XZRect::new(
             p0.x,
             p1.x,
             p0.z,
@@ -44,7 +44,7 @@ impl _Box{
             p1.y,
             ptr.clone()
         )));
-        tmp.sides.add(Rc::new(XYRect::new(
+        tmp.sides.add(Rc::new(XZRect::new(
             p0.x,
             p1.x,
             p0.z,
@@ -53,7 +53,7 @@ impl _Box{
             ptr.clone()
         )));
 
-        tmp.sides.add(Rc::new(XYRect::new(
+        tmp.sides.add(Rc::new(YZRect::new(
             p0.y,
             p1.y,
             p0.z,
@@ -61,7 +61,7 @@ impl _Box{
             p1.x,
             ptr.clone()
         )));
-        tmp.sides.add(Rc::new(XYRect::new(
+        tmp.sides.add(Rc::new(YZRect::new(
             p0.y,
             p1.y,
             p0.z,
