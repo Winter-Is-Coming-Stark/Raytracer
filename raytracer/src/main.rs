@@ -588,7 +588,7 @@ fn final_scene() -> HittableList{
     )));
 
     let emat = Rc::new(Lambertian::new_by_pointer(
-        Rc::new(ImageTexture::new("earthmap.jpg"))
+        Rc::new(ImageTexture::new("raytracer/earthmap.jpg"))
     ));
     objects.add(Rc::new(Sphere::new(
         Point3::new(400.0,200.0,400.0),
