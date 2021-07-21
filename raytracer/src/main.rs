@@ -384,7 +384,7 @@ fn cornell_box() -> BvhNode{
     ));
 
     box1 = Rc::new(RotateY::new(box1,15.0));
-    //box1 = Rc::new(Translate::new(box1,Vec3::new(265.0,0.0,295.0)));
+    box1 = Rc::new(Translate::new(box1,Vec3::new(265.0,0.0,295.0)));
     objects.add(box1);
 
     let mut box2:Rc<dyn Hittable> = Rc::new(_Box::new(
@@ -393,7 +393,7 @@ fn cornell_box() -> BvhNode{
         white.clone()
     ));
 
-    //box2 = Rc::new(RotateY::new(box2,-18.0));
+    box2 = Rc::new(RotateY::new(box2,-18.0));
     box2 = Rc::new(Translate::new(box2,Vec3::new(130.0,0.0,65.0)));
     objects.add(box2);
 
