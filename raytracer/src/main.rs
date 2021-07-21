@@ -13,13 +13,15 @@ mod sphere;
 mod vec3;
 mod bvh;
 mod texture;
+mod perlin;
+mod arrect;
 
-use image::{ImageBuffer, RgbImage};
+use image::{ImageBuffer, RgbImage,ImageDecoder,GenericImageView};
 use indicatif::ProgressBar;
 
 use crate::camera::Camera;
 use crate::hittable::HitRecord;
-use crate::material::Metal;
+use crate::material::{Metal, DiffuseLight};
 use crate::material::{Dielectric, Lambertian};
 use crate::moving_sphere::MovingSphere;
 use crate::rtweekend::INFINITY;
@@ -34,31 +36,29 @@ use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
 use crate::bvh::BvhNode;
-use crate::texture::CheckerTexture;
+use crate::texture::{CheckerTexture, ImageTexture};
+use crate::texture::NoiseTexture;
+use crate::arrect::XYRect;
 
-fn ray_color(r: Ray, world: &BvhNode, depth: i32) -> Color {
+fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
 
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
-    if world.hit(r, 0.001, INFINITY, &mut rec) {
-        //let target = rec.p + rec.normal + Vec3::random_unit_vector();
-        //return ray_color(Ray::new(rec.p, target - rec.p), world, depth - 1) * 0.5;
-        let mut scattered = Ray::default_new();
-        let mut attenuation = Color::zero();
-        if rec
-            .mat_ptr
-            .scatter(r, &rec, &mut attenuation, &mut scattered)
-        {
-            return ray_color(scattered, world, depth - 1) * attenuation;
-        }
-        Color::zero();
+
+    if !world.hit(r,0.001,INFINITY,&mut rec){
+        return background;
     }
 
-    let unit_direction = r.direction().unit();
-    let t = (unit_direction.y + 1.0) * 0.5;
-    Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
+    let mut scattered = Ray::default_new();
+    let mut attenuation = Color::zero();
+    let emitted = rec.mat_ptr.emitted(rec.u,rec.v,&rec.p);
+    let mut tmp_rec = rec.clone();
+    if !rec.mat_ptr.scatter(r, &mut tmp_rec,&mut attenuation,&mut scattered){
+        return emitted;
+    }
+    emitted + ray_color(scattered,background,world,depth - 1) * attenuation
 }
 
 fn main() {
@@ -66,10 +66,11 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 100.0;
+    let samples_per_pixel = 400.0;
     let max_depth = 50;
 
     //world
+    /*
     let world = random_scene();
 
     //camera
@@ -89,7 +90,28 @@ fn main() {
         0.0,
         1.0,
     );
+    */
 
+    let world = simple_light();
+    let background = Vec3::new(0.0,0.0,0.0);
+
+    //camera
+    let lookfrom = Point3::new(26.0, 3.0, 6.0);
+    let lookat = Point3::new(0.0, 2.0, 0.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+    let cam = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
     //rand
     let mut rng = rand::thread_rng();
 
@@ -97,9 +119,9 @@ fn main() {
     println!("P3\n{} {} \n255\n", image_width, image_height);
     let mut img: RgbImage = ImageBuffer::new(image_width as u32, image_height as u32);
     let bar = ProgressBar::new(image_width as u64);
-    let mut j_ = image_height - 1.0;
 
-    while j_ >= 0.0 {
+    let mut j_ = 0.0;
+    while j_ < image_height {
         let mut i_ = 0.0;
         while i_ < image_width {
             let mut s_ = 0.0;
@@ -108,7 +130,7 @@ fn main() {
                 let u_ = (i_ + rng.gen::<f64>()) / (image_width - 1.0);
                 let v_ = (j_ + rng.gen::<f64>()) / (image_height - 1.0);
                 let r_ = cam.get_ray(u_, v_);
-                pixel_color += ray_color(r_, &world, max_depth);
+                pixel_color += ray_color(r_, background,&world, max_depth);
                 s_ += 1.0;
             }
             //color write
@@ -134,9 +156,9 @@ fn main() {
             i_ += 1.0;
         }
         bar.inc(1);
-        j_ -= 1.0;
+        j_ += 1.0;
     }
-    img.save("output/test.png").unwrap();
+    img.save("test.png").unwrap();
     bar.finish();
 }
 
@@ -212,5 +234,87 @@ pub fn random_scene() -> BvhNode {
         &world,
         0.0,
         1.0
+    )
+}
+
+fn two_spheres() -> BvhNode{
+    let mut objects = HittableList::new_default();
+
+    let checker = Rc::new(CheckerTexture::new_by_color(Color::new(0.2,0.3,0.1),Color::new(0.9,0.9,0.9)));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,-10.0,0.0),
+        10.0,
+        Rc::new(Lambertian::new_by_pointer(checker.clone()))
+    ))));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,10.0,0.0),
+        10.0,
+        Rc::new(Lambertian::new_by_pointer(checker.clone()))
+    ))));
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
+    )
+}
+
+fn two_perlin_spheres() -> BvhNode{
+    let mut objects = HittableList::new_default();
+
+    let pertext = Rc::new(NoiseTexture::new(4.0));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,-1000.0,0.0),
+        1000.0,
+        Rc::new(Lambertian::new_by_pointer(pertext.clone()))
+    ))));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,2.0,0.0),
+        2.0,
+        Rc::new(Lambertian::new_by_pointer(pertext.clone()))
+    ))));
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
+    )
+}
+
+fn earth() -> BvhNode{
+    let earth_texture = Rc::new(ImageTexture::new("earthmap.jpg"));
+    let earth_surface = Rc::new(Lambertian::new_by_pointer(earth_texture.clone()));
+    let mut objects = HittableList::new_default();
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,0.0,0.0),
+        2.0,
+        earth_surface.clone()
+    ))));
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
+    )
+}
+
+fn simple_light() -> BvhNode{
+    let mut objects = HittableList::new_default();
+
+    let pertext = Rc::new(NoiseTexture::new(4.0));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,-1000.0,0.0),
+        1000.0,
+        Rc::new(Lambertian::new_by_pointer(pertext.clone()))
+    ))));
+    objects.add((Rc::new(Sphere::new(
+        Vec3::new(0.0,2.0,0.0),
+        2.0,
+        Rc::new(Lambertian::new_by_pointer(pertext.clone()))
+    ))));
+
+    let difflight = Rc::new(DiffuseLight::new_by_color(Color::new(4.0,4.0,4.0)));
+    objects.add(Rc::new(XYRect::new(3.0,5.0,1.0,3.0,-2.0,difflight.clone())));
+    BvhNode::new_(
+        &objects,
+        0.0,
+        0.0
     )
 }

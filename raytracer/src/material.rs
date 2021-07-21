@@ -16,6 +16,10 @@ pub trait Material {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool;
+
+    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color{
+        Color::new(0.0,0.0,0.0)
+    }
 }
 
 //Lambertian
@@ -144,5 +148,32 @@ impl Material for Dielectric {
         }
         *scattered = Ray::new(rec.p, direction, r_in.time());
         true
+    }
+}
+
+pub struct DiffuseLight{
+    emit: Rc<dyn Texture>
+}
+
+impl DiffuseLight{
+    pub fn new_by_pointer(a: Rc<dyn Texture>) -> Self{
+        Self{
+            emit: a
+        }
+    }
+
+    pub fn new_by_color(c: Color) -> Self{
+        Self{
+            emit: Rc::new(SolidColor::new(c))
+        }
+    }
+}
+
+impl Material for DiffuseLight {
+    fn scatter(&self, _r_in: Ray, _rec: &HitRecord, _attenuation: &mut Vec3, _scattered: &mut Ray) -> bool {
+        false
+    }
+    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color{
+        self.emit.value(u_,v_,*p_)
     }
 }
