@@ -15,6 +15,7 @@ mod bvh;
 mod texture;
 mod perlin;
 mod arrect;
+mod _box;
 
 use image::{ImageBuffer, RgbImage,ImageDecoder,GenericImageView};
 use indicatif::ProgressBar;
@@ -39,7 +40,7 @@ use crate::bvh::BvhNode;
 use crate::texture::{CheckerTexture, ImageTexture};
 use crate::texture::NoiseTexture;
 use crate::arrect::{XYRect, YZRect, XZRect};
-use image::imageops::FilterType::Lanczos3;
+use crate::_box::_Box;
 
 fn ray_color(r: Ray, background: Color,world: &BvhNode, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -356,6 +357,14 @@ fn cornell_box() -> BvhNode{
         555.0,
         0.0,
         555.0,
+        0.0,
+        white.clone()
+    )));
+    objects.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
         555.0,
         white.clone()
     )));
@@ -367,6 +376,20 @@ fn cornell_box() -> BvhNode{
         555.0,
         white.clone()
     )));
+
+    objects.add(Rc::new(_Box::new(
+        Point3::new(130.0,0.0,65.0),
+        Point3::new(295.0,165.0,230.0),
+        white.clone()
+    )));
+
+    objects.add(Rc::new(_Box::new(
+        Point3::new(265.0,0.0,295.0),
+        Point3::new(430.0,330.0,460.0),
+        white.clone()
+    )));
+
+
     BvhNode::new_(
         &objects,
         0.0,
