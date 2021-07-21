@@ -16,7 +16,7 @@ mod texture;
 mod perlin;
 mod arrect;
 mod _box;
-mod constant_medium;
+//mod constant_medium;
 
 use image::{ImageBuffer, RgbImage,ImageDecoder,GenericImageView};
 use indicatif::ProgressBar;
