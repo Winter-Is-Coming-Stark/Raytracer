@@ -67,7 +67,7 @@ impl BvhNode {
 
     pub fn new_(list: &mut HittableList, time0: f64, time1: f64) -> Self {
         let tmp = list.objects.len();
-        BvhNode::new(&mut list.objects, 0,tmp, time0, time1)
+        BvhNode::new(&mut list.objects, 0, tmp, time0, time1)
     }
 
     pub fn box_compare(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>, axis: i32) -> bool {
