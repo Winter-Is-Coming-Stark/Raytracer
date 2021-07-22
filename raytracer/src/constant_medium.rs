@@ -74,6 +74,6 @@ impl Hittable for ConstantMedium {
     }
 
     fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut AABB) -> bool {
-        self.bounding_box(time0, time1, output_box)
+        self.boundary.bounding_box(time0, time1, output_box)
     }
 }

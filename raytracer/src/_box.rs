@@ -78,7 +78,7 @@ impl Hittable for _Box {
         self.sides.hit(r, t_min, t_max, rec)
     }
 
-    fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut AABB) -> bool {
+    fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut AABB) -> bool {
         *output_box = AABB::new(self.box_min, self.box_max);
         true
     }

@@ -68,7 +68,7 @@ impl Translate {
 
 impl Hittable for Translate {
     fn hit(&self, r: Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {
-        let mut moved_r = Ray::new(r.origin() - self.offset, r.direction(), r.time());
+        let moved_r = Ray::new(r.origin() - self.offset, r.direction(), r.time());
         if !self.ptr.hit(moved_r, t_min, t_max, rec) {
             return false;
         }

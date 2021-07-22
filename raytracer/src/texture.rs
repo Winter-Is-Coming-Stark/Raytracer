@@ -81,7 +81,7 @@ impl NoiseTexture {
 }
 
 impl Texture for NoiseTexture {
-    fn value(&self, u: f64, v: f64, p: Vec3) -> Vec3 {
+    fn value(&self, _u: f64, _v: f64, p: Vec3) -> Vec3 {
         Color::new(1.0, 1.0, 1.0)
             * 0.5
             * (1.0 + (self.scale * p.z + 10.0 * self.noise.turb(p, 7)).sin())
@@ -113,7 +113,7 @@ impl ImageTexture {
 }
 
 impl Texture for ImageTexture {
-    fn value(&self, mut u_: f64, mut v_: f64, p_: Vec3) -> Vec3 {
+    fn value(&self, mut u_: f64, mut v_: f64, _p: Vec3) -> Vec3 {
         u_ = clamp(u_, 0.0, 1.0);
         v_ = 1.0 - clamp(v_, 0.0, 1.0);
 

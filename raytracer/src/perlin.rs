@@ -13,7 +13,7 @@ pub struct Perlin {
 
 impl Perlin {
     pub fn perlin_generate_perm(&mut self, axis: i32) {
-        let mut tmp = match axis {
+        let tmp = match axis {
             0 => &mut self.perm_x,
             1 => &mut self.perm_y,
             _ => &mut self.perm_z,
@@ -46,7 +46,7 @@ impl Perlin {
     }
 
     pub fn init(&mut self) {
-        for i in 0..self.point_count {
+        for _i in 0..self.point_count {
             self.ranvec.push(Vec3::random_range(-1.0, 1.0));
         }
 
@@ -86,7 +86,7 @@ impl Perlin {
         Self::trilinear_interp(c, _u, _v, _w)
     }
 
-    pub fn trilinear_interp(mut c: [[[Vec3; 2]; 2]; 2], _u: f64, _v: f64, _w: f64) -> f64 {
+    pub fn trilinear_interp(c: [[[Vec3; 2]; 2]; 2], _u: f64, _v: f64, _w: f64) -> f64 {
         let mut accum = 0.0;
         let uu = _u * _u * (3.0 - 2.0 * _u);
         let vv = _v * _v * (3.0 - 2.0 * _v);
@@ -117,7 +117,7 @@ impl Perlin {
         let mut temp_p = p;
         let mut weight = 1.0;
 
-        for i in 0..depth {
+        for _i in 0..depth {
             accum += weight * self.noise(temp_p);
             weight *= 0.5;
             temp_p *= 2.0;

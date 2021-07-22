@@ -266,7 +266,6 @@ pub fn random_scene() -> BvhNode {
         Color::new(0.9, 0.9, 0.9),
     ));
 
-    let ground_material: Arc<Lambertian> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Arc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
@@ -636,7 +635,7 @@ fn final_scene() -> HittableList {
         Arc::new(Metal::new(Color::new(0.8, 0.8, 0.9), 1.0)),
     )));
 
-    let mut boundary = Arc::new(Sphere::new(
+    let boundary = Arc::new(Sphere::new(
         Point3::new(360.0, 150.0, 145.0),
         70.0,
         Arc::new(Dielectric::new(1.5)),
@@ -677,7 +676,7 @@ fn final_scene() -> HittableList {
     let white = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
     let ns = 1000;
 
-    for j in 0..ns {
+    for _j in 0..ns {
         boxes2.add(Arc::new(Sphere::new(
             Point3::random_range(0.0, 165.0),
             10.0,

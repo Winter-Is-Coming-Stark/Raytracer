@@ -16,7 +16,7 @@ pub trait Material {
         scattered: &mut Ray,
     ) -> bool;
 
-    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color {
+    fn emitted(&self, _u: f64, _v: f64, _p: &Vec3) -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
 }
