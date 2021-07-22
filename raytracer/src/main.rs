@@ -494,7 +494,7 @@ fn cornell_smoke() -> HittableList {
     let red = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
     let white = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
     let green = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
-    let light = Arc::new(DiffuseLight::new_by_color(Color::new(7.0, 7.0, 7.0)));
+    let light = Arc::new(DiffuseLight::new_by_color(Color::new(15.0, 15.0, 15.0)));
 
     objects.add(Arc::new(YZRect::new(
         0.0,
