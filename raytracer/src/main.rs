@@ -73,9 +73,9 @@ fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Col
 fn main() {
     //image
     let aspect_ratio = 1.0;
-    let image_width: f64 = 800.0;
+    let image_width: f64 = 600.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 10000.0;
+    let samples_per_pixel = 200.0;
     let max_depth = 100;
 
     //world
@@ -105,7 +105,7 @@ fn main() {
     let background = Vec3::new(0.0, 0.0, 0.0);
 
     //camera
-    let lookfrom = Point3::new(478.0, 278.0, -600.0);
+    let lookfrom = Point3::new(278.0, 278.0, -800.0);
     let lookat = Point3::new(278.0, 278.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
