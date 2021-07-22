@@ -1,11 +1,11 @@
+use crate::aabb::AABB;
 use crate::material::{Lambertian, Material};
 use crate::vec3::Color;
 use crate::vec3::Point3;
 use crate::HitRecord;
 use crate::Vec3;
 use crate::{Hittable, Ray};
-use std::rc::Rc;
-use crate::aabb::AABB;
+use std::sync::Arc;
 
 pub struct MovingSphere {
     center0: Point3,
@@ -13,7 +13,7 @@ pub struct MovingSphere {
     time0: f64,
     time1: f64,
     radius: f64,
-    mat_ptr: Rc<dyn Material>,
+    mat_ptr: Arc<dyn Material>,
 }
 
 impl MovingSphere {
@@ -23,7 +23,7 @@ impl MovingSphere {
         _time0: f64,
         _time1: f64,
         r: f64,
-        m: Rc<dyn Material>,
+        m: Arc<dyn Material>,
     ) -> Self {
         Self {
             center0: cen0,
@@ -42,7 +42,7 @@ impl MovingSphere {
             time0: 0.0,
             time1: 0.0,
             radius: 0.0,
-            mat_ptr: Rc::new(Lambertian::new(Color::zero())),
+            mat_ptr: Arc::new(Lambertian::new(Color::zero())),
         }
     }
 
@@ -82,16 +82,16 @@ impl Hittable for MovingSphere {
 
     fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut AABB) -> bool {
         let box0 = AABB::new(
-            self.center(_time0) - Vec3::new(self.radius,self.radius,self.radius),
-            self.center(_time0) + Vec3::new(self.radius,self.radius,self.radius)
+            self.center(_time0) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(_time0) + Vec3::new(self.radius, self.radius, self.radius),
         );
 
         let box1 = AABB::new(
-            self.center(_time1) - Vec3::new(self.radius,self.radius,self.radius),
-            self.center(_time1) + Vec3::new(self.radius,self.radius,self.radius)
+            self.center(_time1) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(_time1) + Vec3::new(self.radius, self.radius, self.radius),
         );
 
-        *output_box = AABB::surrounding_box(box0,box1);
+        *output_box = AABB::surrounding_box(box0, box1);
         true
     }
 }

@@ -1,12 +1,11 @@
 use crate::hittable::HitRecord;
+use crate::texture::SolidColor;
+use crate::texture::Texture;
 use crate::vec3::Color;
 use crate::Ray;
 use crate::Vec3;
 use rand::Rng;
-use std::rc::Rc;
-use crate::texture::SolidColor;
-use crate::texture::Texture;
-
+use std::sync::Arc;
 
 pub trait Material {
     fn scatter(
@@ -17,25 +16,25 @@ pub trait Material {
         scattered: &mut Ray,
     ) -> bool;
 
-    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color{
-        Color::new(0.0,0.0,0.0)
+    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color {
+        Color::new(0.0, 0.0, 0.0)
     }
 }
 
 //Lambertian
 pub struct Lambertian {
-    albedo: Rc<dyn Texture>,
+    albedo: Arc<dyn Texture>,
 }
 
 impl Lambertian {
     pub fn new(a: Color) -> Lambertian {
-        Lambertian { albedo: Rc::new(SolidColor::new(a)) }
+        Lambertian {
+            albedo: Arc::new(SolidColor::new(a)),
+        }
     }
 
-    pub fn new_by_pointer(a: Rc<dyn Texture>) -> Self{
-        Self{
-            albedo: a
-        }
+    pub fn new_by_pointer(a: Arc<dyn Texture>) -> Self {
+        Self { albedo: a }
     }
 }
 
@@ -54,7 +53,7 @@ impl Material for Lambertian {
         }
 
         *scattered = Ray::new(rec.p, scatter_direction, r_in.time());
-        *attenuation = self.albedo.value(rec.u,rec.v,rec.p);
+        *attenuation = self.albedo.value(rec.u, rec.v, rec.p);
         true
     }
 }
@@ -151,56 +150,64 @@ impl Material for Dielectric {
     }
 }
 
-pub struct DiffuseLight{
-    emit: Rc<dyn Texture>
+pub struct DiffuseLight {
+    emit: Arc<dyn Texture>,
 }
 
-impl DiffuseLight{
-    pub fn new_by_pointer(a: Rc<dyn Texture>) -> Self{
-        Self{
-            emit: a
-        }
+impl DiffuseLight {
+    pub fn new_by_pointer(a: Arc<dyn Texture>) -> Self {
+        Self { emit: a }
     }
 
-    pub fn new_by_color(c: Color) -> Self{
-        Self{
-            emit: Rc::new(SolidColor::new(c))
+    pub fn new_by_color(c: Color) -> Self {
+        Self {
+            emit: Arc::new(SolidColor::new(c)),
         }
     }
 }
 
 impl Material for DiffuseLight {
-    fn scatter(&self, _r_in: Ray, _rec: &HitRecord, _attenuation: &mut Vec3, _scattered: &mut Ray) -> bool {
+    fn scatter(
+        &self,
+        _r_in: Ray,
+        _rec: &HitRecord,
+        _attenuation: &mut Vec3,
+        _scattered: &mut Ray,
+    ) -> bool {
         false
     }
-    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color{
-        self.emit.value(u_,v_,*p_)
+    fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color {
+        self.emit.value(u_, v_, *p_)
     }
 }
 
 //Isotropic
-pub struct Isotropic{
-    albedo: Rc<dyn Texture>
+pub struct Isotropic {
+    albedo: Arc<dyn Texture>,
 }
 
-impl Isotropic{
-    pub fn new_by_color(c: Color) -> Self{
-        Self{
-            albedo: Rc::new(SolidColor::new(c))
+impl Isotropic {
+    pub fn new_by_color(c: Color) -> Self {
+        Self {
+            albedo: Arc::new(SolidColor::new(c)),
         }
     }
 
-    pub fn new(a: Rc<dyn Texture>) -> Self{
-        Self{
-            albedo: a
-        }
+    pub fn new(a: Arc<dyn Texture>) -> Self {
+        Self { albedo: a }
     }
 }
 
-impl Material for Isotropic{
-    fn scatter(&self, r_in: Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
-        *scattered = Ray::new(rec.p,Vec3::random_in_unit_sphere(),r_in.time());
-        *attenuation = self.albedo.value(rec.u,rec.v,rec.p);
+impl Material for Isotropic {
+    fn scatter(
+        &self,
+        r_in: Ray,
+        rec: &HitRecord,
+        attenuation: &mut Vec3,
+        scattered: &mut Ray,
+    ) -> bool {
+        *scattered = Ray::new(rec.p, Vec3::random_in_unit_sphere(), r_in.time());
+        *attenuation = self.albedo.value(rec.u, rec.v, rec.p);
         true
     }
 }

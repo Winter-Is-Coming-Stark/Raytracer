@@ -1,21 +1,23 @@
+use crate::aabb::AABB;
 use crate::hittable::HitRecord;
 use crate::hittable::Hittable;
 use crate::Ray;
-use std::rc::Rc;
-use crate::aabb::AABB;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct HittableList {
-    pub objects: Vec<Rc<dyn Hittable>>,
+    pub objects: Vec<Arc<dyn Hittable>>,
 }
+unsafe impl Sync for HittableList {}
+unsafe impl Send for HittableList {}
 
 impl HittableList {
-    pub fn add(&mut self, object: Rc<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable>) {
         self.objects.push(object);
     }
 
-    pub fn new(object: Rc<dyn Hittable>) -> HittableList {
-        let objects_tmp: Vec<Rc<dyn Hittable>> = vec![object];
+    pub fn new(object: Arc<dyn Hittable>) -> HittableList {
+        let objects_tmp: Vec<Arc<dyn Hittable>> = vec![object];
 
         HittableList {
             objects: objects_tmp,
@@ -23,7 +25,7 @@ impl HittableList {
     }
 
     pub fn new_default() -> HittableList {
-        let objects_tmp: Vec<Rc<dyn Hittable>> = Vec::new();
+        let objects_tmp: Vec<Arc<dyn Hittable>> = Vec::new();
         HittableList {
             objects: objects_tmp,
         }
@@ -51,18 +53,22 @@ impl crate::hittable::Hittable for HittableList {
     }
 
     fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut AABB) -> bool {
-        if self.objects.is_empty(){
+        if self.objects.is_empty() {
             return false;
         }
 
-        let mut temp_box:AABB = AABB::default_new();
+        let mut temp_box: AABB = AABB::default_new();
         let mut first_box = true;
 
-        for object in &self.objects{
-            if !object.bounding_box(time0,time1,&mut temp_box){
+        for object in &self.objects {
+            if !object.bounding_box(time0, time1, &mut temp_box) {
                 return false;
             }
-            *output_box = if first_box {temp_box} else {AABB::surrounding_box(*output_box,temp_box)};
+            *output_box = if first_box {
+                temp_box
+            } else {
+                AABB::surrounding_box(*output_box, temp_box)
+            };
             first_box = true;
         }
         true

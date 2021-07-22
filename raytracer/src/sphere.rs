@@ -1,20 +1,20 @@
+use crate::aabb;
+use crate::aabb::AABB;
 use crate::material::Material;
+use crate::rtweekend::PI;
 use crate::Point3;
 use crate::Ray;
 use crate::Vec3;
-use std::rc::Rc;
-use crate::aabb;
-use crate::aabb::AABB;
-use crate::rtweekend::PI;
+use std::sync::Arc;
 
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    mat_ptr: Rc<dyn Material>,
+    mat_ptr: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(cen: Point3, r: f64, m: Rc<dyn Material>) -> Sphere {
+    pub fn new(cen: Point3, r: f64, m: Arc<dyn Material>) -> Sphere {
         Sphere {
             center: cen,
             radius: r,
@@ -22,11 +22,7 @@ impl Sphere {
         }
     }
 
-    pub fn get_sphere_uv(
-        p: Point3,
-        u: &mut f64,
-        v: &mut f64
-    ){
+    pub fn get_sphere_uv(p: Point3, u: &mut f64, v: &mut f64) {
         let theta = (-p.y).acos();
         let phi = (-p.z).atan2(p.x) + PI;
 
@@ -50,7 +46,7 @@ impl crate::hittable::Hittable for Sphere {
                 rec.p = r.at(t);
                 let mut outward_normal = (rec.p - self.center) / self.radius;
                 rec.set_face_normal(&r, &mut outward_normal);
-                Sphere::get_sphere_uv(outward_normal,&mut rec.u,&mut rec.v);
+                Sphere::get_sphere_uv(outward_normal, &mut rec.u, &mut rec.v);
                 rec.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
@@ -60,7 +56,7 @@ impl crate::hittable::Hittable for Sphere {
                 rec.p = r.at(t);
                 let mut outward_normal = (rec.p - self.center) / self.radius;
                 rec.set_face_normal(&r, &mut outward_normal);
-                Sphere::get_sphere_uv(outward_normal,&mut rec.u,&mut rec.v);
+                Sphere::get_sphere_uv(outward_normal, &mut rec.u, &mut rec.v);
                 rec.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
@@ -70,8 +66,8 @@ impl crate::hittable::Hittable for Sphere {
 
     fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut AABB) -> bool {
         *output_box = AABB::new(
-            self.center - Vec3::new(self.radius,self.radius,self.radius),
-            self.center + Vec3::new(self.radius,self.radius,self.radius),
+            self.center - Vec3::new(self.radius, self.radius, self.radius),
+            self.center + Vec3::new(self.radius, self.radius, self.radius),
         );
         true
     }
