@@ -38,15 +38,12 @@ pub use crate::vec3::Color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
 pub use hittable_list::HittableList;
-use image::imageops::FilterType::Lanczos3;
-use imageproc::distance_transform::Norm::L1;
 use rand::Rng;
 pub use ray::Ray;
 use sphere::Sphere;
 use std::rc::Rc;
 pub use vec3::Vec3;
-use image::flat::NormalForm::ImagePacked;
-use std::collections::hash_map::Entry::Vacant;
+use std::sync::Arc;
 
 fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -77,7 +74,7 @@ fn main() {
     let aspect_ratio = 1.0;
     let image_width: f64 = 800.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 10000.0;
+    let samples_per_pixel = 500.0;
     let max_depth = 50;
 
     //world
@@ -107,7 +104,7 @@ fn main() {
     let background = Vec3::new(0.0, 0.0, 0.0);
 
     //camera
-    let lookfrom = Point3::new(478.0, 478.0, -600.0);
+    let lookfrom = Point3::new(478.0, 278.0, -600.0);
     let lookat = Point3::new(278.0, 278.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
@@ -162,14 +159,14 @@ fn main() {
             let r_ = r_ as i64;
             let g_ = g_ as i64;
             let b_ = b_ as i64;
-            //Color::wrt_color(&pixel_color, samples_per_pixel);
+            Color::wrt_color(&pixel_color, samples_per_pixel);
             *pixel = image::Rgb([r_ as u8, g_ as u8, b_ as u8]);
             i_ += 1.0;
         }
         bar.inc(1);
         j_ += 1.0;
     }
-    img.save("output/test.png").unwrap();
+    img.save("test.jpg").unwrap();
     bar.finish();
 }
 
@@ -416,7 +413,7 @@ fn cornell_box() -> BvhNode {
     BvhNode::new_(&objects, 0.0, 0.0)
 }
 
-fn cornell_smoke() -> BvhNode {
+fn cornell_smoke() -> HittableList {
     let mut objects = HittableList::new_default();
 
     let red = Rc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
@@ -501,8 +498,7 @@ fn cornell_smoke() -> BvhNode {
         0.01,
         Color::new(1.0, 1.0, 1.0),
     )));
-
-    BvhNode::new_(&objects, 0.0, 0.0)
+    objects
 }
 
 fn final_scene() -> HittableList{
@@ -588,7 +584,7 @@ fn final_scene() -> HittableList{
     )));
 
     let emat = Rc::new(Lambertian::new_by_pointer(
-        Rc::new(ImageTexture::new("raytracer/earthmap.jpg"))
+        Rc::new(ImageTexture::new("earthmap.jpg"))
     ));
     objects.add(Rc::new(Sphere::new(
         Point3::new(400.0,200.0,400.0),
