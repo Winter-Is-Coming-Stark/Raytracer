@@ -63,7 +63,7 @@ fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Col
     let mut tmp_rec = rec.clone();
     if !rec
         .mat_ptr
-        .scatter(r, &mut tmp_rec, &mut attenuation, &mut scattered)
+        .scatter(r, &tmp_rec, &mut attenuation, &mut scattered)
     {
         return emitted;
     }
@@ -111,15 +111,13 @@ fn main() {
     let dist_to_focus = 10.0;
     let aperture = 0.0;
     let cam = Camera::new(
-        lookfrom,
-        lookat,
+        (lookfrom, lookat),
         vup,
         40.0,
         aspect_ratio,
         aperture,
         dist_to_focus,
-        0.0,
-        1.0,
+        (0.0, 1.0),
     );
 
     //render
@@ -258,7 +256,7 @@ fn main() {
     img.save("output/test.jpg").unwrap();
     bar.finish();
 }
-
+/*
 pub fn random_scene() -> BvhNode {
     let mut world = HittableList::new_default();
     let checker = Arc::new(CheckerTexture::new_by_color(
@@ -347,7 +345,7 @@ fn two_spheres() -> BvhNode {
     objects.add(Arc::new(Sphere::new(
         Vec3::new(0.0, 10.0, 0.0),
         10.0,
-        Arc::new(Lambertian::new_by_pointer(checker.clone())),
+        Arc::new(Lambertian::new_by_pointer(checker)),
     )));
     BvhNode::new_(&mut objects, 0.0, 0.0)
 }
@@ -364,7 +362,7 @@ fn two_perlin_spheres() -> BvhNode {
     objects.add(Arc::new(Sphere::new(
         Vec3::new(0.0, 2.0, 0.0),
         2.0,
-        Arc::new(Lambertian::new_by_pointer(pertext.clone())),
+        Arc::new(Lambertian::new_by_pointer(pertext)),
     )));
     BvhNode::new_(&mut objects, 0.0, 0.0)
 }
@@ -574,7 +572,7 @@ fn cornell_smoke() -> HittableList {
     )));
     objects
 }
-
+*/
 fn final_scene() -> HittableList {
     let mut boxes1 = HittableList::new_default();
     let ground = Arc::new(Lambertian::new(Color::new(0.48, 0.83, 0.53)));

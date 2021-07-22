@@ -35,17 +35,6 @@ impl MovingSphere {
         }
     }
 
-    pub fn default_new() -> Self {
-        Self {
-            center0: Point3::zero(),
-            center1: Point3::zero(),
-            time0: 0.0,
-            time1: 0.0,
-            radius: 0.0,
-            mat_ptr: Arc::new(Lambertian::new(Color::zero())),
-        }
-    }
-
     pub fn center(&self, time: f64) -> Point3 {
         self.center0
             + (self.center1 - self.center0) * (time - self.time0) / (self.time1 - self.time0)

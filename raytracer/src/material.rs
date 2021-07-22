@@ -155,10 +155,6 @@ pub struct DiffuseLight {
 }
 
 impl DiffuseLight {
-    pub fn new_by_pointer(a: Arc<dyn Texture>) -> Self {
-        Self { emit: a }
-    }
-
     pub fn new_by_color(c: Color) -> Self {
         Self {
             emit: Arc::new(SolidColor::new(c)),
@@ -191,10 +187,6 @@ impl Isotropic {
         Self {
             albedo: Arc::new(SolidColor::new(c)),
         }
-    }
-
-    pub fn new(a: Arc<dyn Texture>) -> Self {
-        Self { albedo: a }
     }
 }
 

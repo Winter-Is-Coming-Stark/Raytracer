@@ -19,15 +19,13 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
-        lookfrom: Point3,
-        lookat: Point3,
+        (lookfrom, lookat): (Point3,Point3),
         vup: Vec3,
         vfov: f64,
         aspect_ratio: f64,
         aperture: f64,
         focus_dist: f64,
-        _time0: f64,
-        _time1: f64,
+        (_time0, _time1): (f64,f64)
     ) -> Camera {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();

@@ -18,11 +18,6 @@ impl SolidColor {
     pub fn new(c: Color) -> Self {
         Self { color_value: c }
     }
-    pub fn new_(red: f64, green: f64, blue: f64) -> Self {
-        Self {
-            color_value: Color::new(red, green, blue),
-        }
-    }
 }
 
 impl Texture for SolidColor {
@@ -38,13 +33,6 @@ pub struct CheckerTexture {
 }
 
 impl CheckerTexture {
-    pub fn new(_even: Arc<dyn Texture>, _odd: Arc<dyn Texture>) -> Self {
-        Self {
-            even: _even,
-            odd: _odd,
-        }
-    }
-
     pub fn new_by_color(c1: Color, c2: Color) -> Self {
         Self {
             even: Arc::new(SolidColor::new(c1)),
@@ -100,7 +88,7 @@ impl ImageTexture {
     pub fn new(filename: &str) -> Self {
         let img = image::open(filename).unwrap();
         let buf = img.clone().into_bytes();
-        let width_tmp = img.clone().width();
+        let width_tmp = img.width();
         let height_tmp = img.height();
 
         Self {
@@ -129,7 +117,7 @@ impl Texture for ImageTexture {
 
         let color_scale = 1.0 / 255.0;
         Color::new(
-            color_scale * self.data[j * self.bytes_per_scanline as usize + i * 3 + 0] as f64,
+            color_scale * self.data[j * self.bytes_per_scanline as usize + i * 3] as f64,
             color_scale * self.data[j * self.bytes_per_scanline as usize + i * 3 + 1] as f64,
             color_scale * self.data[j * self.bytes_per_scanline as usize + i * 3 + 2] as f64,
         )

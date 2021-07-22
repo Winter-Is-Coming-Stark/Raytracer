@@ -37,9 +37,7 @@ impl AABB {
         let mut t0 = (self.min().x - r.origin().x) * inv_d;
         let mut t1 = (self.max().x - r.origin().x) * inv_d;
         if inv_d < 0.0 {
-            let tmp = t0;
-            t0 = t1;
-            t1 = tmp;
+            std::mem::swap(&mut t0, &mut t1);
         }
         t_min = if t0 > t_min { t0 } else { t_min };
         t_max = if t1 < t_max { t1 } else { t_max };
@@ -52,9 +50,7 @@ impl AABB {
         let mut t0 = (self.min().y - r.origin().y) * inv_d;
         let mut t1 = (self.max().y - r.origin().y) * inv_d;
         if inv_d < 0.0 {
-            let tmp = t0;
-            t0 = t1;
-            t1 = tmp;
+            std::mem::swap(&mut t0, &mut t1)
         }
         t_min = if t0 > t_min { t0 } else { t_min };
         t_max = if t1 < t_max { t1 } else { t_max };
@@ -67,9 +63,7 @@ impl AABB {
         let mut t0 = (self.min().z - r.origin().z) * inv_d;
         let mut t1 = (self.max().z - r.origin().z) * inv_d;
         if inv_d < 0.0 {
-            let tmp = t0;
-            t0 = t1;
-            t1 = tmp;
+            std::mem::swap(&mut t0, &mut t1)
         }
         t_min = if t0 > t_min { t0 } else { t_min };
         t_max = if t1 < t_max { t1 } else { t_max };
