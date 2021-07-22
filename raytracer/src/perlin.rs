@@ -29,7 +29,6 @@ impl Perlin {
         for i in 1..n {
             let target = random_int(0, n - i) as usize;
             let j = i as usize;
-            let tmp = p[j];
             p.swap(j, target);
         }
     }

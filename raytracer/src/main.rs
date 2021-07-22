@@ -60,7 +60,7 @@ fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Col
     let mut scattered = Ray::default_new();
     let mut attenuation = Color::zero();
     let emitted = rec.mat_ptr.emitted(rec.u, rec.v, &rec.p);
-    let mut tmp_rec = rec.clone();
+    let tmp_rec = rec.clone();
     if !rec
         .mat_ptr
         .scatter(r, &tmp_rec, &mut attenuation, &mut scattered)
@@ -75,7 +75,7 @@ fn main() {
     let aspect_ratio = 1.0;
     let image_width: f64 = 800.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 5000.0;
+    let samples_per_pixel = 2000.0;
     let max_depth = 50;
 
     //world
