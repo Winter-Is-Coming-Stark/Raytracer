@@ -101,7 +101,7 @@ fn main() {
     );
     */
 
-    let world = final_scene();
+    let world = cornell_smoke();
     let background = Vec3::new(0.0, 0.0, 0.0);
 
     //camera
