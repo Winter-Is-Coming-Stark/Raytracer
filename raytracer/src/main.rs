@@ -73,10 +73,10 @@ fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Col
 fn main() {
     //image
     let aspect_ratio = 1.0;
-    let image_width: f64 = 800.0;
+    let image_width: f64 = 400.0;
     let image_height: f64 = image_width / aspect_ratio;
-    let samples_per_pixel = 2000.0;
-    let max_depth = 50;
+    let samples_per_pixel = 100.0;
+    let max_depth = 20;
 
     //world
     /*
