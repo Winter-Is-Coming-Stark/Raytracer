@@ -30,7 +30,7 @@ impl Perlin {
             let target = random_int(0, n - i) as usize;
             let j = i as usize;
             let tmp = p[j];
-            p.swap(j,target);
+            p.swap(j, target);
         }
     }
 
