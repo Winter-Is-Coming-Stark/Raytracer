@@ -513,10 +513,10 @@ fn cornell_smoke() -> HittableList {
         red.clone(),
     )));
     objects.add(Arc::new(XZRect::new(
-        213.0,
-        343.0,
-        227.0,
-        332.0,
+        113.0,
+        443.0,
+        127.0,
+        432.0,
         554.0,
         light.clone(),
     )));
