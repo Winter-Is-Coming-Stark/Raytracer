@@ -13,7 +13,7 @@ pub struct BvhNode {
 
 impl BvhNode {
     pub fn new(
-        src_objects: &Vec<Arc<dyn Hittable>>,
+        src_objects: &mut Vec<Arc<dyn Hittable>>,
         start: usize,
         end: usize,
         time0: f64,
@@ -28,25 +28,25 @@ impl BvhNode {
         let object_span = end - start;
         let left_tmp: Arc<dyn Hittable>;
         let right_tmp: Arc<dyn Hittable>;
-        let mut objects = src_objects.clone();
+        //let mut objects = src_objects.clone();
 
         if object_span == 1 {
-            left_tmp = objects[start].clone();
-            right_tmp = objects[start].clone();
+            left_tmp = src_objects[start].clone();
+            right_tmp = src_objects[start].clone();
         } else if object_span == 2 {
-            if comparator(&objects[start], &objects[start + 1]) == Less {
-                left_tmp = objects[start].clone();
-                right_tmp = objects[start + 1].clone();
+            if comparator(&src_objects[start], &src_objects[start + 1]) == Less {
+                left_tmp = src_objects[start].clone();
+                right_tmp = src_objects[start + 1].clone();
             } else {
-                left_tmp = objects[start + 1].clone();
-                right_tmp = objects[start].clone();
+                left_tmp = src_objects[start + 1].clone();
+                right_tmp = src_objects[start].clone();
             }
         } else {
-            objects.as_mut_slice()[start..end].sort_by(comparator);
+            src_objects.as_mut_slice()[start..end].sort_by(comparator);
 
             let mid = start + object_span / 2;
-            left_tmp = Arc::new(BvhNode::new(&objects, start, mid, time0, time1));
-            right_tmp = Arc::new(BvhNode::new(&objects, mid, end, time0, time1));
+            left_tmp = Arc::new(BvhNode::new(src_objects, start, mid, time0, time1));
+            right_tmp = Arc::new(BvhNode::new(src_objects, mid, end, time0, time1));
         }
 
         let mut box_left = AABB::default_new();
@@ -65,8 +65,9 @@ impl BvhNode {
         }
     }
 
-    pub fn new_(list: &HittableList, time0: f64, time1: f64) -> Self {
-        BvhNode::new(&list.objects, 0, list.objects.len(), time0, time1)
+    pub fn new_(list: &mut HittableList, time0: f64, time1: f64) -> Self {
+        let tmp = list.objects.len();
+        BvhNode::new(&mut list.objects, 0,tmp, time0, time1)
     }
 
     pub fn box_compare(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>, axis: i32) -> bool {

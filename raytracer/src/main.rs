@@ -73,7 +73,7 @@ fn ray_color(r: Ray, background: Color, world: &HittableList, depth: i32) -> Col
 fn main() {
     //image
     let aspect_ratio = 1.0;
-    let image_width: f64 = 600.0;
+    let image_width: f64 = 800.0;
     let image_height: f64 = image_width / aspect_ratio;
     let samples_per_pixel = 5000.0;
     let max_depth = 50;
@@ -101,11 +101,11 @@ fn main() {
     );
     */
 
-    let world = cornell_smoke();
+    let world = final_scene();
     let background = Vec3::new(0.0, 0.0, 0.0);
 
     //camera
-    let lookfrom = Point3::new(278.0, 278.0, -800.0);
+    let lookfrom = Point3::new(478.0, 278.0, -600.0);
     let lookat = Point3::new(278.0, 278.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
@@ -330,7 +330,7 @@ pub fn random_scene() -> BvhNode {
         1.0,
         material3,
     )));
-    BvhNode::new_(&world, 0.0, 1.0)
+    BvhNode::new_(&mut world, 0.0, 1.0)
 }
 
 fn two_spheres() -> BvhNode {
@@ -350,7 +350,7 @@ fn two_spheres() -> BvhNode {
         10.0,
         Arc::new(Lambertian::new_by_pointer(checker.clone())),
     )));
-    BvhNode::new_(&objects, 0.0, 0.0)
+    BvhNode::new_(&mut objects, 0.0, 0.0)
 }
 
 fn two_perlin_spheres() -> BvhNode {
@@ -367,7 +367,7 @@ fn two_perlin_spheres() -> BvhNode {
         2.0,
         Arc::new(Lambertian::new_by_pointer(pertext.clone())),
     )));
-    BvhNode::new_(&objects, 0.0, 0.0)
+    BvhNode::new_(&mut objects, 0.0, 0.0)
 }
 
 fn earth() -> BvhNode {
@@ -379,7 +379,7 @@ fn earth() -> BvhNode {
         2.0,
         earth_surface.clone(),
     )));
-    BvhNode::new_(&objects, 0.0, 0.0)
+    BvhNode::new_(&mut objects, 0.0, 0.0)
 }
 
 fn simple_light() -> BvhNode {
@@ -406,7 +406,7 @@ fn simple_light() -> BvhNode {
         -2.0,
         difflight.clone(),
     )));
-    BvhNode::new_(&objects, 0.0, 0.0)
+    BvhNode::new_(&mut objects, 0.0, 0.0)
 }
 
 fn cornell_box() -> BvhNode {
@@ -485,7 +485,7 @@ fn cornell_box() -> BvhNode {
     box2 = Arc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
     objects.add(box2);
 
-    BvhNode::new_(&objects, 0.0, 0.0)
+    BvhNode::new_(&mut objects, 0.0, 0.0)
 }
 
 fn cornell_smoke() -> HittableList {
@@ -494,7 +494,7 @@ fn cornell_smoke() -> HittableList {
     let red = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
     let white = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
     let green = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
-    let light = Arc::new(DiffuseLight::new_by_color(Color::new(15.0, 15.0, 15.0)));
+    let light = Arc::new(DiffuseLight::new_by_color(Color::new(7.0, 7.0, 7.0)));
 
     objects.add(Arc::new(YZRect::new(
         0.0,
@@ -601,7 +601,7 @@ fn final_scene() -> HittableList {
 
     let mut objects = HittableList::new_default();
 
-    objects.add(Arc::new(BvhNode::new_(&boxes1, 0.0, 1.0)));
+    objects.add(Arc::new(BvhNode::new_(&mut boxes1, 0.0, 1.0)));
 
     let light = Arc::new(DiffuseLight::new_by_color(Color::new(7.0, 7.0, 7.0)));
     objects.add(Arc::new(XZRect::new(
@@ -686,7 +686,7 @@ fn final_scene() -> HittableList {
     }
     objects.add(Arc::new(Translate::new(
         Arc::new(RotateY::new(
-            Arc::new(BvhNode::new_(&boxes2, 0.0, 1.0)),
+            Arc::new(BvhNode::new_(&mut boxes2, 0.0, 1.0)),
             15.0,
         )),
         Vec3::new(-100.0, 270.0, 395.0),
