@@ -1,6 +1,5 @@
 use crate::aabb::AABB;
-use crate::material::{Lambertian, Material};
-use crate::vec3::Color;
+use crate::material::Material;
 use crate::vec3::Point3;
 use crate::HitRecord;
 use crate::Vec3;

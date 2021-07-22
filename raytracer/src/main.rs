@@ -22,7 +22,7 @@ use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
 use crate::_box::_Box;
-use crate::arrect::{XYRect, XZRect, YZRect};
+use crate::arrect::XZRect;
 use crate::bvh::BvhNode;
 use crate::camera::Camera;
 use crate::constant_medium::ConstantMedium;
@@ -32,8 +32,8 @@ use crate::material::{DiffuseLight, Metal};
 use crate::moving_sphere::MovingSphere;
 use crate::rtweekend::INFINITY;
 use crate::rtweekend::{clamp, random_double};
+use crate::texture::ImageTexture;
 use crate::texture::NoiseTexture;
-use crate::texture::{CheckerTexture, ImageTexture};
 pub use crate::vec3::Color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
