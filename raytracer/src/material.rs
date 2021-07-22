@@ -1,5 +1,5 @@
 use crate::hittable::HitRecord;
-use crate::texture::SolidColor;
+use crate::texture::{SolidColor, ImageTexture};
 use crate::texture::Texture;
 use crate::vec3::Color;
 use crate::Ray;
@@ -160,6 +160,16 @@ impl DiffuseLight {
             emit: Arc::new(SolidColor::new(c)),
         }
     }
+    pub fn new_by_color1() -> Self {
+        Self {
+            emit: Arc::new(ImageTexture::new("raytracer/star1.jpg")),
+        }
+    }
+    pub fn new_by_color3() -> Self {
+        Self {
+            emit: Arc::new(ImageTexture::new("raytracer/star3.jpeg")),
+        }
+    }
 }
 
 impl Material for DiffuseLight {
@@ -173,7 +183,7 @@ impl Material for DiffuseLight {
         false
     }
     fn emitted(&self, u_: f64, v_: f64, p_: &Vec3) -> Color {
-        self.emit.value(u_, v_, *p_)
+        self.emit.value(u_, v_, *p_) * 1.5
     }
 }
 
