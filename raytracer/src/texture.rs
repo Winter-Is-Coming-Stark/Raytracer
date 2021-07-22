@@ -33,12 +33,14 @@ pub struct CheckerTexture {
 }
 
 impl CheckerTexture {
+    /*
     pub fn new_by_color(c1: Color, c2: Color) -> Self {
         Self {
             even: Arc::new(SolidColor::new(c1)),
             odd: Arc::new(SolidColor::new(c2)),
         }
     }
+    */
 }
 
 impl Texture for CheckerTexture {

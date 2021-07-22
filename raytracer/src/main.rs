@@ -602,12 +602,7 @@ fn final_scene() -> HittableList {
 
     let light = Arc::new(DiffuseLight::new_by_color(Color::new(7.0, 7.0, 7.0)));
     objects.add(Arc::new(XZRect::new(
-        123.0,
-        423.0,
-        147.0,
-        412.0,
-        554.0,
-        light.clone(),
+        123.0, 423.0, 147.0, 412.0, 554.0, light,
     )));
 
     let center1 = Point3::new(400.0, 400.0, 200.0);
@@ -619,7 +614,7 @@ fn final_scene() -> HittableList {
         0.0,
         1.0,
         50.0,
-        moving_sphere_material.clone(),
+        moving_sphere_material,
     )));
 
     objects.add(Arc::new(Sphere::new(
@@ -640,7 +635,7 @@ fn final_scene() -> HittableList {
     ));
     objects.add(boundary.clone());
     objects.add(Arc::new(ConstantMedium::new_by_color(
-        boundary.clone(),
+        boundary,
         0.2,
         Color::new(0.2, 0.4, 0.9),
     )));
@@ -661,7 +656,7 @@ fn final_scene() -> HittableList {
     objects.add(Arc::new(Sphere::new(
         Point3::new(400.0, 200.0, 400.0),
         100.0,
-        emat.clone(),
+        emat,
     )));
     let pertext = Arc::new(NoiseTexture::new(0.1));
     objects.add(Arc::new(Sphere::new(
