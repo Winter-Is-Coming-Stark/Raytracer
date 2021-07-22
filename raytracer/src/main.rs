@@ -18,7 +18,7 @@ mod sphere;
 mod texture;
 mod vec3;
 
-use image::{GenericImageView, ImageBuffer, ImageDecoder, Progress, RgbImage};
+use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
 use crate::_box::_Box;

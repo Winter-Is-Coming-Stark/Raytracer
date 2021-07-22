@@ -4,7 +4,6 @@ use crate::material::{Isotropic, Material};
 use crate::rtweekend::{random_double, INFINITY};
 use crate::texture::Texture;
 use crate::{Color, Hittable, Ray, Vec3};
-use rand::random;
 use std::sync::Arc;
 
 pub struct ConstantMedium {

@@ -1,7 +1,6 @@
-use crate::rtweekend::{random_double, random_int};
+use crate::rtweekend::random_int;
 use crate::vec3::Point3;
 use crate::Vec3;
-use rand::random;
 use std::vec::Vec;
 
 pub struct Perlin {

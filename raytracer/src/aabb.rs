@@ -2,8 +2,6 @@ use crate::rtweekend::fmax;
 use crate::rtweekend::fmin;
 use crate::vec3::Point3;
 use crate::Ray;
-use std::cmp::{max, min};
-use std::sync::Arc;
 
 #[derive(Clone, Debug, PartialEq, Copy)]
 pub struct AABB {

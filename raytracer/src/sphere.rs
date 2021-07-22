@@ -1,4 +1,3 @@
-use crate::aabb;
 use crate::aabb::AABB;
 use crate::material::Material;
 use crate::rtweekend::PI;

@@ -3,8 +3,6 @@ use crate::hittable::HitRecord;
 use crate::rtweekend::random_int;
 use crate::{Hittable, HittableList, Ray};
 use std::cmp::Ordering::{Greater, Less};
-use std::panic::panic_any;
-use std::slice;
 use std::sync::Arc;
 
 pub struct BvhNode {
