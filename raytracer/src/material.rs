@@ -1,6 +1,6 @@
 use crate::hittable::HitRecord;
-use crate::texture::{SolidColor, ImageTexture};
 use crate::texture::Texture;
+use crate::texture::{ImageTexture, SolidColor};
 use crate::vec3::Color;
 use crate::Ray;
 use crate::Vec3;
@@ -152,38 +152,38 @@ impl Material for Dielectric {
 
 pub struct DiffuseLight {
     emit: Arc<dyn Texture>,
-    k: f64
+    k: f64,
 }
 
 impl DiffuseLight {
     pub fn new_by_color(c: Color) -> Self {
         Self {
             emit: Arc::new(SolidColor::new(c)),
-            k: 1.0
+            k: 1.0,
         }
     }
     pub fn new_by_color1() -> Self {
         Self {
             emit: Arc::new(ImageTexture::new("raytracer/star1.jpg")),
-            k: 1.5
+            k: 1.5,
         }
     }
     pub fn new_by_color3() -> Self {
         Self {
             emit: Arc::new(ImageTexture::new("raytracer/star3.jpeg")),
-            k: 1.5
+            k: 1.5,
         }
     }
     pub fn new_by_color5() -> Self {
         Self {
             emit: Arc::new(ImageTexture::new("raytracer/star5.jpeg")),
-            k: 0.5
+            k: 0.5,
         }
     }
     pub fn new_by_color6() -> Self {
         Self {
             emit: Arc::new(ImageTexture::new("raytracer/star6.jpeg")),
-            k: 0.5
+            k: 0.5,
         }
     }
 }

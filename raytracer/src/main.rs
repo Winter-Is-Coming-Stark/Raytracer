@@ -22,7 +22,7 @@ use image::{ImageBuffer, RgbImage};
 use indicatif::ProgressBar;
 
 use crate::_box::_Box;
-use crate::arrect::{XZRect, YZRect, XYRect};
+use crate::arrect::{XYRect, XZRect, YZRect};
 use crate::bvh::BvhNode;
 use crate::camera::Camera;
 use crate::constant_medium::ConstantMedium;
@@ -32,22 +32,22 @@ use crate::material::{DiffuseLight, Metal};
 use crate::moving_sphere::MovingSphere;
 use crate::rtweekend::INFINITY;
 use crate::rtweekend::{clamp, random_double};
+use crate::texture::CheckerTexture;
 use crate::texture::ImageTexture;
 use crate::texture::NoiseTexture;
 pub use crate::vec3::Color;
 use crate::vec3::Point3;
 pub use hittable::Hittable;
 pub use hittable_list::HittableList;
+use imageproc::distance_transform::Norm::L1;
 use rand::Rng;
 pub use ray::Ray;
 use sphere::Sphere;
+use std::rc::Rc;
 use std::sync::mpsc::channel;
 use std::sync::Arc;
 use threadpool::ThreadPool;
 pub use vec3::Vec3;
-use std::rc::Rc;
-use crate::texture::CheckerTexture;
-use imageproc::distance_transform::Norm::L1;
 
 fn ray_color(r: Ray, background: Color, world: &Arc<HittableList>, depth: i32) -> Color {
     let mut rec = HitRecord::new();
@@ -690,88 +690,88 @@ fn final_scene() -> HittableList {
     objects
 }
 
-fn my_scene() -> HittableList{
+fn my_scene() -> HittableList {
     let mut objects = HittableList::new_default();
-    let ground_material = Arc::new(Metal::new(Color::new(0.0,0.7,0.9),0.5));
+    let ground_material = Arc::new(Metal::new(Color::new(0.0, 0.7, 0.9), 0.5));
 
     //objects.add(Arc::new(Sphere::new(Point3::new(0.0,0.0,0.0),100.0,ground_material.clone())));
     //objects.add(Arc::new(Sphere::new(Point3::new(0.0,0.0,0.0),-90.0,ground_material)));
 
     let star1 = Arc::new(DiffuseLight::new_by_color1());
     objects.add(Arc::new(_Box::new(
-        Point3::new(-4.0,-7.0,-7.0),
-        Point3::new(10.0,7.0,7.0),
-        star1.clone()
+        Point3::new(-4.0, -7.0, -7.0),
+        Point3::new(10.0, 7.0, 7.0),
+        star1.clone(),
     )));
 
     objects.add(Arc::new(_Box::new(
-        Point3::new(-6.0,-9.0,-9.0),
-        Point3::new(12.0,9.0,9.0),
-        Arc::new(Dielectric::new(3.0))
+        Point3::new(-6.0, -9.0, -9.0),
+        Point3::new(12.0, 9.0, 9.0),
+        Arc::new(Dielectric::new(3.0)),
     )));
 
     let star3 = Arc::new(DiffuseLight::new_by_color3());
     objects.add(Arc::new(Sphere::new(
-        Point3::new(-14.0,8.0,10.0),
+        Point3::new(-14.0, 8.0, 10.0),
         3.0,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(15.0,7.0,-7.0),
+        Point3::new(15.0, 7.0, -7.0),
         2.0,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(18.0,11.0,18.0),
+        Point3::new(18.0, 11.0, 18.0),
         4.0,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(22.0,-13.0,15.0),
+        Point3::new(22.0, -13.0, 15.0),
         1.5,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(-10.0,-20.0,17.0),
+        Point3::new(-10.0, -20.0, 17.0),
         1.5,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(17.0,-17.0,17.0),
+        Point3::new(17.0, -17.0, 17.0),
         0.5,
-        star3.clone()
+        star3.clone(),
     )));
     objects.add(Arc::new(Sphere::new(
-        Point3::new(-10.0,-9.0,-13.0),
+        Point3::new(-10.0, -9.0, -13.0),
         2.0,
-        star3.clone()
+        star3.clone(),
     )));
     /*
-    let mut fogs = HittableList::new_default();
-    let ns = 100;
+        let mut fogs = HittableList::new_default();
+        let ns = 100;
 
-    for _j in 0..ns{
-        let fog_sphere = Arc::new(Sphere::new(
-            Point3::random_in_unit_sphere() * 5.0,
-            0.3,
-            star3.clone()
+        for _j in 0..ns{
+            let fog_sphere = Arc::new(Sphere::new(
+                Point3::random_in_unit_sphere() * 5.0,
+                0.3,
+                star3.clone()
+            ));
+            fogs.add(Arc::new(ConstantMedium::new_by_color(
+                fog_sphere,
+                0.0001,
+                Color::new(0.4,0.2,0.8)
+            )))
+        }
+        objects.add(Arc::new(Translate::new(
+            Arc::new(BvhNode::new_(
+                &mut fogs,
+                0.0,
+                0.0
+            )),
+            Vec3::new(-20.0,10.0,10.0)
+            )
         ));
-        fogs.add(Arc::new(ConstantMedium::new_by_color(
-            fog_sphere,
-            0.0001,
-            Color::new(0.4,0.2,0.8)
-        )))
-    }
-    objects.add(Arc::new(Translate::new(
-        Arc::new(BvhNode::new_(
-            &mut fogs,
-            0.0,
-            0.0
-        )),
-        Vec3::new(-20.0,10.0,10.0)
-        )
-    ));
-*/
+    */
 
     objects.add(Arc::new(XZRect::new(
         -100.0,
@@ -779,61 +779,60 @@ fn my_scene() -> HittableList{
         -100.0,
         100.0,
         10.0,
-        Arc::new(Metal::new(Color::new(0.9,0.9,0.9),0.0))
+        Arc::new(Metal::new(Color::new(0.9, 0.9, 0.9), 0.0)),
     )));
     /*
-    objects.add(Arc::new(YZRect::new(
-        -100.0,
-        100.0,
-        -100.0,
-        100.0,
-        -18.0,
-        Arc::new(Metal::new(Color::new(0.9,0.9,0.9),0.0))
-    )));
-*/
+        objects.add(Arc::new(YZRect::new(
+            -100.0,
+            100.0,
+            -100.0,
+            100.0,
+            -18.0,
+            Arc::new(Metal::new(Color::new(0.9,0.9,0.9),0.0))
+        )));
+    */
     objects.add(Arc::new(XYRect::new(
         -100.0,
         100.0,
         -100.0,
         100.0,
         -20.0,
-        Arc::new(Metal::new(Color::new(0.9,0.9,0.9),0.0))
+        Arc::new(Metal::new(Color::new(0.9, 0.9, 0.9), 0.0)),
     )));
 
     let star5 = Arc::new(DiffuseLight::new_by_color5());
     let star6 = Arc::new(DiffuseLight::new_by_color6());
     objects.add(Arc::new(Sphere::new(
-        Point3::new(16.0,-10.0,15.0),
+        Point3::new(16.0, -10.0, 15.0),
         5.0,
-        star5.clone()
+        star5.clone(),
     )));
-
 
     let mut fogs = HittableList::new_default();
     let ns = 10000;
 
-    for _j in 0..ns{
+    for _j in 0..ns {
         let fog_sphere = Arc::new(Sphere::new(
-            Point3::new(16.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 10.0 * random_double(0.8,1.0),
+            Point3::new(16.0, -10.0, 15.0)
+                + Vec3::random_in_unit_disk().unit() * 10.0 * random_double(0.8, 1.0),
             0.1,
-            star6.clone()
+            star6.clone(),
         ));
         fogs.add(fog_sphere);
         let fog_sphere = Arc::new(Sphere::new(
-            Point3::new(16.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 9.5 * random_double(0.7,1.0),
+            Point3::new(16.0, -10.0, 15.0)
+                + Vec3::random_in_unit_disk().unit() * 9.5 * random_double(0.7, 1.0),
             0.1,
-            star5.clone()
+            star5.clone(),
         ));
         fogs.add(fog_sphere);
         let fog_sphere = Arc::new(Sphere::new(
-            Point3::new(16.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 8.0 * random_double(0.8,1.0),
+            Point3::new(16.0, -10.0, 15.0)
+                + Vec3::random_in_unit_disk().unit() * 8.0 * random_double(0.8, 1.0),
             0.1,
-            star6.clone()
+            star6.clone(),
         ));
     }
-    objects.add(Arc::new(BvhNode::new_(
-        &mut fogs,
-        0.0,0.0,
-    )));
+    objects.add(Arc::new(BvhNode::new_(&mut fogs, 0.0, 0.0)));
     objects
 }
