@@ -76,7 +76,7 @@ fn ray_color(r: Ray, background: Color, world: &Arc<HittableList>, depth: i32) -
 fn main() {
     //image
     let aspect_ratio = 1.0;
-    let image_width: f64 = 600.0;
+    let image_width: f64 = 800.0;
     let image_height: f64 = image_width / aspect_ratio;
     let samples_per_pixel = 5000.0;
     let max_depth = 50;
@@ -726,6 +726,26 @@ fn my_scene() -> HittableList{
         4.0,
         star3.clone()
     )));
+    objects.add(Arc::new(Sphere::new(
+        Point3::new(22.0,-13.0,15.0),
+        1.5,
+        star3.clone()
+    )));
+    objects.add(Arc::new(Sphere::new(
+        Point3::new(-10.0,-20.0,17.0),
+        1.5,
+        star3.clone()
+    )));
+    objects.add(Arc::new(Sphere::new(
+        Point3::new(17.0,-17.0,17.0),
+        0.5,
+        star3.clone()
+    )));
+    objects.add(Arc::new(Sphere::new(
+        Point3::new(-10.0,-9.0,-13.0),
+        2.0,
+        star3.clone()
+    )));
     /*
     let mut fogs = HittableList::new_default();
     let ns = 100;
@@ -794,13 +814,13 @@ fn my_scene() -> HittableList{
 
     for _j in 0..ns{
         let fog_sphere = Arc::new(Sphere::new(
-            Point3::new(-14.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 9.0 * random_double(0.8,1.0),
+            Point3::new(-14.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 10.0 * random_double(0.8,1.0),
             0.1,
             star6.clone()
         ));
         fogs.add(fog_sphere);
         let fog_sphere = Arc::new(Sphere::new(
-            Point3::new(-14.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 8.5 * random_double(0.8,1.0),
+            Point3::new(-14.0,-10.0,15.0) + Vec3::random_in_unit_disk().unit() * 9.5 * random_double(0.7,1.0),
             0.1,
             star5.clone()
         ));
