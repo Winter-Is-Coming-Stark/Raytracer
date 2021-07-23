@@ -689,7 +689,6 @@ fn final_scene() -> HittableList {
 
 fn my_scene() -> HittableList {
     let mut objects = HittableList::new_default();
-    let ground_material = Arc::new(Metal::new(Color::new(0.0, 0.7, 0.9), 0.5));
 
     //objects.add(Arc::new(Sphere::new(Point3::new(0.0,0.0,0.0),100.0,ground_material.clone())));
     //objects.add(Arc::new(Sphere::new(Point3::new(0.0,0.0,0.0),-90.0,ground_material)));
@@ -829,6 +828,7 @@ fn my_scene() -> HittableList {
             0.1,
             star6.clone(),
         ));
+        fogs.add(fog_sphere);
     }
     objects.add(Arc::new(BvhNode::new_(&mut fogs, 0.0, 0.0)));
     objects
