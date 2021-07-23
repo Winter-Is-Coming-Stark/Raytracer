@@ -55,19 +55,19 @@ ACM伪摄影公司，简称PPCA，于2021年成立😉
 - 工科同学结课🎉 作品互评🤯
 必做部分：
 
-- [ x] book 1
-- [ x] 3 BVH
-- [ x] 7 Rectangles and Lights
+- [✅] book 1
+- [✅] 3 BVH
+- [✅] 7 Rectangles and Lights
 
 选做部分：
 
-- [ x] 2 Motion Blur
-- [ x] 4 Solid Textures
-- [ x] 5 Perlin Noise
-- [ x] 6 Image Texture Mapping
-- [ x] 8 Instances
-- [ x] 9 Volumes
-- [ x] 10 book 2 final scene //玻璃球折射的效果出现了book1没有出现的奇怪bug，下面有一层光晕
+- [✅] 2 Motion Blur
+- [✅] 4 Solid Textures
+- [✅] 5 Perlin Noise
+- [✅] 6 Image Texture Mapping
+- [✅] 8 Instances
+- [✅] 9 Volumes
+- [✅] 10 book 2 final scene //玻璃球折射的效果出现了book1没有出现的奇怪bug，下面有一层光晕
 
 
 
