@@ -136,7 +136,7 @@ fn main() {
         bar.inc(1);
         j_ -= 1.0;
     }
-    //img.save("output/test.png").unwrap();
+    img.save("output/test.png").unwrap();
     bar.finish();
 }
 
